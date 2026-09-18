@@ -13,6 +13,7 @@ import { ExportModal } from '@/components/ExportModal';
 import { SuperAdminPage } from '@/components/SuperAdminPage';
 import { LoginPage } from '@/components/LoginPage';
 import { PwaPrompt } from '@/components/PwaPrompt';
+import { GreetingBanner } from '@/components/GreetingBanner';
 import { Building2, Home, Sparkles, FileSpreadsheet, FileText, Download } from 'lucide-react';
 import { TransactionType, AccountType, Transaction } from '@/lib/types';
 
@@ -165,6 +166,8 @@ export default function HomeApp() {
           {activeNavTab === 'DASHBOARD' && (
             <div className="space-y-4 animate-fadeIn">
               
+              <GreetingBanner ownerName={tenant.owner_name} />
+
               {/* SWITCHER TAB UTAMA (UKURAN BESAR & KONTRAS TINGGI) */}
               <div className="bg-gray-200 p-1.5 rounded-3xl border border-gray-300 grid grid-cols-2 gap-1.5 shadow-inner">
                 {/* Tab Bisnis RT/RW */}
