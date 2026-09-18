@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, User, Phone, MapPin, FileText, Check } from 'lucide-react';
 import { Customer } from '@/lib/types';
 
@@ -32,6 +33,11 @@ export const CustomerModal: React.FC<CustomerModalProps> = ({
   const [monthlyFee, setMonthlyFee] = useState<number | string>(150000);
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (customer) {
@@ -87,9 +93,11 @@ export const CustomerModal: React.FC<CustomerModalProps> = ({
     onClose();
   };
 
-  return (
+  if (!isOpen || !mounted) return null;
+
+  const modalContent = (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="bg-white border-t sm:border border-gray-200 w-full max-w-md rounded-t-[32px] sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 text-gray-900 shadow-xl animate-slideUp space-y-4">
+      <div className="bg-white border-t sm:border border-gray-200 w-full max-w-md rounded-t-[32px] sm:rounded-3xl max-h-[90vh] overflow-y-auto overscroll-contain p-5 text-gray-900 shadow-xl animate-slideUp space-y-4">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-gray-100">
@@ -249,4 +257,6 @@ export const CustomerModal: React.FC<CustomerModalProps> = ({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };

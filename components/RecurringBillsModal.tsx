@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Layers, Plus, Pencil, Trash2, Check, Calendar, Building2, User } from 'lucide-react';
 import { RecurringBill } from '@/lib/types';
 import { formatIDR } from '@/lib/utils';
@@ -32,6 +33,11 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
   const [amount, setAmount] = useState<number | string>(500000);
   const [dueDay, setDueDay] = useState<number | string>(5);
   const [account, setAccount] = useState<'BUSINESS' | 'PERSONAL'>('BUSINESS');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (!isOpen) return null;
 
@@ -91,9 +97,11 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
     setBillToDelete(null);
   };
 
-  return (
+  if (!isOpen || !mounted) return null;
+
+  const modalContent = (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="bg-white border-t sm:border border-gray-200 w-full max-w-lg rounded-t-[32px] sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 text-gray-900 shadow-xl animate-slideUp space-y-4">
+      <div className="bg-white border-t sm:border border-gray-200 w-full max-w-lg rounded-t-[32px] sm:rounded-3xl max-h-[90vh] overflow-y-auto overscroll-contain p-5 text-gray-900 shadow-xl animate-slideUp space-y-4">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-gray-100">
@@ -303,8 +311,6 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
           )}
         </div>
 
-      </div>
-
       <ConfirmModal
         isOpen={!!billToDelete}
         title="Hapus Tagihan Rutin?"
@@ -313,6 +319,9 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
         onConfirm={handleConfirmDelete}
         onCancel={() => setBillToDelete(null)}
       />
+      </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };

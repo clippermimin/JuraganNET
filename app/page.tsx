@@ -163,7 +163,7 @@ export default function HomeApp() {
         />
 
         {/* Main Content Area */}
-        <div className="flex-1 px-3.5 pt-3.5">
+        <div className="flex-1 px-3.5 pt-3.5 pb-[140px]">
           {activeNavTab === 'DASHBOARD' && (
             <div className="space-y-4 animate-fadeIn">
               
