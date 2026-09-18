@@ -14,7 +14,7 @@ import { SuperAdminPage } from '@/components/SuperAdminPage';
 import { LoginPage } from '@/components/LoginPage';
 import { PwaPrompt } from '@/components/PwaPrompt';
 import { GreetingBanner } from '@/components/GreetingBanner';
-import { Building2, Home, Sparkles, FileSpreadsheet, FileText, Download } from 'lucide-react';
+import { Building2, Home, Sparkles, FileSpreadsheet, FileText, Download, Hexagon, Zap } from 'lucide-react';
 import { TransactionType, AccountType, Transaction } from '@/lib/types';
 
 export default function HomeApp() {
@@ -110,12 +110,13 @@ export default function HomeApp() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white p-4">
-        <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center animate-pulse mb-3">
-          <Sparkles className="w-6 h-6" />
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center text-gray-900 p-4">
+        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.12)] relative animate-pulse mb-6">
+          <Hexagon className="w-10 h-10 text-blue-600 absolute stroke-[1.5]" />
+          <Zap className="w-5 h-5 text-indigo-500 fill-indigo-500 relative z-10" />
         </div>
-        <h2 className="text-base font-bold text-white tracking-tight">Menyiapkan JuraganNet...</h2>
-        <p className="text-xs text-slate-400 mt-1">Memuat data kas & pelanggan Arjuna Net</p>
+        <h2 className="text-sm font-bold text-slate-800 tracking-tight">Memuat JuraganNet...</h2>
+        <p className="text-[11px] text-slate-500 mt-1.5 animate-pulse">Menyiapkan data kas & pelanggan</p>
       </div>
     );
   }
