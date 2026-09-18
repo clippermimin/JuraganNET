@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "JuraganNet - Arjuna Net (RT/RW Net PWA)",
-  description: "Aplikasi keuangan & manajemen iuran pelanggan RT/RW Net mobile-first ramah orang awam",
+  title: "JuraganNet - Platform Cashflow RT/RW Net",
+  description: "Aplikasi keuangan & manajemen iuran pelanggan RT/RW Net mobile-first yang intuitif dan praktis",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
