@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Lock, 
   User, 
@@ -27,6 +27,33 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handleBeforeInstall = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallPwa = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+      if (isIos) {
+        alert("Untuk menginstall PWA di iPhone/iPad:\n\n1. Ketuk ikon Share (Kotak dengan panah ke atas) di menu browser.\n2. Pilih 'Add to Home Screen' (Tambahkan ke Layar Utama).");
+      } else {
+        alert("Aplikasi sudah terinstall, atau browser Anda tidak mendukung auto-install.\n\nCek menu browser (⋮) dan cari opsi 'Install App' atau 'Tambahkan ke Layar Utama'.");
+      }
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,9 +192,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           {/* PWA Install CTA (Minimal) */}
           <div className="mt-6 flex justify-center">
             <button
-              onClick={() => {
-                alert("Untuk menginstall PWA:\n\n1. Ketuk ikon Menu (⋮) atau Share di browser.\n2. Pilih 'Tambahkan ke Layar Utama' (Add to Homescreen).");
-              }}
+              onClick={handleInstallPwa}
               className="flex items-center gap-2 px-5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-full text-xs font-black transition active:scale-95 border border-blue-100/50"
             >
               <Download className="w-4 h-4" />
