@@ -10,7 +10,7 @@ interface CashflowChartProps {
 export const CashflowChart: React.FC<CashflowChartProps> = ({ transactions }) => {
   const chartData = useMemo(() => {
     // We want the last 5 months including current month.
-    const months = [];
+    const months: { label: string; fullMonth: string; year: number; monthIndex: number; in: number; out: number }[] = [];
     const now = new Date();
     
     for (let i = 4; i >= 0; i--) {

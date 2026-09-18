@@ -19,6 +19,7 @@ import {
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { formatIDR } from '@/lib/utils';
 import { ConfirmModal } from './ConfirmModal';
+import { Tenant, BusinessSummary, PersonalSummary } from '@/lib/types';
 
 interface SettingsModalProps {
   isOpen: boolean;

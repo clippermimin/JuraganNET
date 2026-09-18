@@ -26,60 +26,102 @@ export function useJuraganStore() {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = useState<string>('September 2026');
 
-  // Load initial data from localStorage or fallback to mockData
+  // Load initial data from Supabase (or fallback to localStorage)
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    try {
-      const storedTenant = localStorage.getItem(STORAGE_KEYS.TENANT);
-      const storedTenantsList = localStorage.getItem(STORAGE_KEYS.TENANTS_LIST);
-      const storedSession = localStorage.getItem(STORAGE_KEYS.SESSION);
-      const storedTx = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
-      const storedCust = localStorage.getItem(STORAGE_KEYS.CUSTOMERS);
-      const storedBills = localStorage.getItem(STORAGE_KEYS.BILLS);
-      const storedSalary = localStorage.getItem(STORAGE_KEYS.SALARY_BUDGET);
+    const loadData = async () => {
+      try {
+        let loadedFromSupabase = false;
+        const storedSession = localStorage.getItem(STORAGE_KEYS.SESSION);
+        if (storedSession) setSession(JSON.parse(storedSession));
 
-      if (storedTenant) setTenant(JSON.parse(storedTenant));
-      if (storedSession) setSession(JSON.parse(storedSession));
-      if (storedTenantsList) {
-        setTenants(JSON.parse(storedTenantsList));
-      } else {
-        localStorage.setItem(STORAGE_KEYS.TENANTS_LIST, JSON.stringify(INITIAL_TENANTS));
-      }
-      
-      if (storedTx) {
-        setTransactions(JSON.parse(storedTx));
-      } else {
+        if (isSupabaseConfigured && supabase) {
+          try {
+            const [
+              { data: tData },
+              { data: cData },
+              { data: txData },
+              { data: bData }
+            ] = await Promise.all([
+              supabase.from('tenants').select('*'),
+              supabase.from('customers').select('*').order('name', { ascending: true }),
+              supabase.from('transactions').select('*').order('created_at', { ascending: false }),
+              supabase.from('recurring_bills').select('*')
+            ]);
+
+            if (tData && tData.length > 0) {
+              setTenants(tData);
+              const currentTenantId = JSON.parse(storedSession || '{}')?.tenantId;
+              const activeT = tData.find((t: any) => t.id === currentTenantId) || tData[0];
+              if (activeT) setTenant(activeT);
+            } else if (tData && tData.length === 0) {
+              // Empty database, maybe first run. Keep defaults.
+              setTenants(INITIAL_TENANTS);
+            }
+
+            if (cData) setCustomers(cData);
+            if (txData) setTransactions(txData);
+            if (bData) setBills(bData);
+
+            loadedFromSupabase = true;
+          } catch (e) {
+            console.error('Failed fetching from Supabase, falling back to local:', e);
+          }
+        }
+
+        if (!loadedFromSupabase) {
+          const storedTenant = localStorage.getItem(STORAGE_KEYS.TENANT);
+          const storedTenantsList = localStorage.getItem(STORAGE_KEYS.TENANTS_LIST);
+          const storedTx = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
+          const storedCust = localStorage.getItem(STORAGE_KEYS.CUSTOMERS);
+          const storedBills = localStorage.getItem(STORAGE_KEYS.BILLS);
+
+          if (storedTenant) setTenant(JSON.parse(storedTenant));
+          if (storedTenantsList) {
+            setTenants(JSON.parse(storedTenantsList));
+          } else {
+            localStorage.setItem(STORAGE_KEYS.TENANTS_LIST, JSON.stringify(INITIAL_TENANTS));
+          }
+          
+          if (storedTx) {
+            setTransactions(JSON.parse(storedTx));
+          } else {
+            setTransactions(INITIAL_TRANSACTIONS);
+            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(INITIAL_TRANSACTIONS));
+          }
+
+          if (storedCust) {
+            setCustomers(JSON.parse(storedCust));
+          } else {
+            const initialCust = generateMockCustomers();
+            setCustomers(initialCust);
+            localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(initialCust));
+          }
+
+          if (storedBills) {
+            setBills(JSON.parse(storedBills));
+          } else {
+            setBills(INITIAL_RECURRING_BILLS);
+            localStorage.setItem(STORAGE_KEYS.BILLS, JSON.stringify(INITIAL_RECURRING_BILLS));
+          }
+        }
+
+        const storedSalary = localStorage.getItem(STORAGE_KEYS.SALARY_BUDGET);
+        if (storedSalary) {
+          setSalaryBudget(Number(storedSalary));
+        }
+      } catch (err) {
+        console.error('Failed to load local storage data:', err);
         setTransactions(INITIAL_TRANSACTIONS);
-        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(INITIAL_TRANSACTIONS));
-      }
-
-      if (storedCust) {
-        setCustomers(JSON.parse(storedCust));
-      } else {
-        const initialCust = generateMockCustomers();
-        setCustomers(initialCust);
-        localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(initialCust));
-      }
-
-      if (storedBills) {
-        setBills(JSON.parse(storedBills));
-      } else {
+        setCustomers(generateMockCustomers());
         setBills(INITIAL_RECURRING_BILLS);
-        localStorage.setItem(STORAGE_KEYS.BILLS, JSON.stringify(INITIAL_RECURRING_BILLS));
+      } finally {
+        setIsLoaded(true);
       }
+    };
 
-      if (storedSalary) {
-        setSalaryBudget(Number(storedSalary));
-      }
-    } catch (err) {
-      console.error('Failed to load local storage data:', err);
-      setTransactions(INITIAL_TRANSACTIONS);
-      setCustomers(generateMockCustomers());
-      setBills(INITIAL_RECURRING_BILLS);
-    } finally {
-      setIsLoaded(true);
-    }
+    loadData();
   }, []);
 
   // Save changes to localStorage
@@ -440,6 +482,13 @@ export function useJuraganStore() {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.TENANTS_LIST, JSON.stringify(updated));
     }
+    
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('tenants').insert([newTenant]).then(({ error }) => {
+        if (error) console.error('Supabase sync error for add tenant:', error);
+      });
+    }
+
     return newTenant;
   }, [tenants]);
 
@@ -449,6 +498,12 @@ export function useJuraganStore() {
     setTenants(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.TENANTS_LIST, JSON.stringify(updated));
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('tenants').update(updatedTenant).eq('id', updatedTenant.id).then(({ error }) => {
+        if (error) console.error('Supabase sync error for update tenant:', error);
+      });
     }
   }, [tenants]);
 
