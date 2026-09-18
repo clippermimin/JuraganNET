@@ -1,69 +1,335 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState } from 'react';
+import { useJuraganStore } from '@/lib/store';
+import { Header } from '@/components/Header';
+import { BusinessTab } from '@/components/BusinessTab';
+import { PersonalTab } from '@/components/PersonalTab';
+import { CustomerPage } from '@/components/CustomerPage';
+import { BottomNav } from '@/components/BottomNav';
+import { TransactionModal } from '@/components/TransactionModal';
+import { SettingsModal } from '@/components/SettingsModal';
+import { ExportModal } from '@/components/ExportModal';
+import { SuperAdminPage } from '@/components/SuperAdminPage';
+import { LoginPage } from '@/components/LoginPage';
+import { PwaPrompt } from '@/components/PwaPrompt';
+import { Building2, Home, Sparkles, FileSpreadsheet, FileText, Download } from 'lucide-react';
+import { TransactionType, AccountType, Transaction } from '@/lib/types';
+
+export default function HomeApp() {
+  const {
+    isLoaded,
+    currentUserRole,
+    loginAsTenant,
+    loginAsSuperAdmin,
+    logout,
+    tenant,
+    tenants,
+    setTenant,
+    addTenant,
+    updateTenant,
+    deleteTenant,
+    switchTenant,
+    selectedMonth,
+    setSelectedMonth,
+    transactions,
+    customers,
+    bills,
+    businessSummary,
+    personalSummary,
+    setSalaryBudget,
+    addTransaction,
+    updateTransaction,
+    deleteTransaction,
+    receiveCustomerPayment,
+    payRecurringBill,
+    addCustomer,
+    updateCustomer,
+    deleteCustomer,
+    addRecurringBill,
+    updateRecurringBill,
+    deleteRecurringBill,
+    resetToFactoryDefault,
+  } = useJuraganStore();
+
+  // Navigation State
+  const [activeNavTab, setActiveNavTab] = useState<'DASHBOARD' | 'CUSTOMERS' | 'SETTINGS'>('DASHBOARD');
+  // Main Switcher on Dashboard: Business vs Personal
+  const [dashboardMode, setDashboardMode] = useState<'BUSINESS' | 'PERSONAL'>('BUSINESS');
+
+  // Transaction Modal State
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const [txModalType, setTxModalType] = useState<TransactionType>('IN');
+  const [txModalAccount, setTxModalAccount] = useState<AccountType>('BUSINESS');
+  const [editingTx, setEditingTx] = useState<Transaction | null>(null);
+
+  // Settings & Export Modal States
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
+
+  // Handlers
+  const handleOpenTransaction = (type: TransactionType, account?: AccountType, transaction?: Transaction) => {
+    if (transaction) {
+      setEditingTx(transaction);
+      setTxModalType(transaction.type);
+      setTxModalAccount(transaction.account);
+    } else {
+      setEditingTx(null);
+      setTxModalType(type);
+      setTxModalAccount(account || (dashboardMode === 'BUSINESS' ? 'BUSINESS' : 'PERSONAL'));
+    }
+    setIsTxModalOpen(true);
+  };
+
+  const handleSaveTransaction = (
+    type: TransactionType,
+    account: AccountType,
+    category: string,
+    amount: number,
+    notes?: string,
+    id?: string
+  ) => {
+    if (id && editingTx) {
+      updateTransaction({
+        ...editingTx,
+        type,
+        account,
+        category,
+        amount,
+        notes: notes || ''
+      });
+    } else {
+      addTransaction(type, account, category, amount, notes);
+    }
+  };
+
+  const handleConfirmDeleteTx = (id: string) => {
+    deleteTransaction(id);
+  };
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white p-4">
+        <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center animate-pulse mb-3">
+          <Sparkles className="w-6 h-6" />
+        </div>
+        <h2 className="text-base font-bold text-white tracking-tight">Menyiapkan JuraganNet...</h2>
+        <p className="text-xs text-slate-400 mt-1">Memuat data kas & pelanggan Arjuna Net</p>
+      </div>
+    );
+  }
+
+  // Not Logged In -> Show Login Page
+  if (currentUserRole === null) {
+    return (
+      <LoginPage
+        tenants={tenants}
+        onLoginTenant={loginAsTenant}
+        onLoginSuperAdmin={loginAsSuperAdmin}
+      />
+    );
+  }
+
+  // Super Admin Route -> Show Admin Panel bypassing the app UI
+  if (currentUserRole === 'SUPER_ADMIN') {
+    return (
+      <SuperAdminPage 
+        tenants={tenants} 
+        onAddTenant={addTenant} 
+        onUpdateTenant={updateTenant}
+        onDeleteTenant={deleteTenant}
+        onLogout={logout} 
+      />
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="min-h-screen bg-gray-50 text-gray-900 flex justify-center selection:bg-blue-500 selection:text-white">
+      {/* Mobile-First Frame: max-w-md mx-auto */}
+      <div className="w-full max-w-md min-h-screen flex flex-col relative bg-gray-50 shadow-2xl border-x border-gray-200">
+        
+        {/* PWA Add to Homescreen Prompt */}
+        <PwaPrompt />
+
+        {/* Top Sticky Header */}
+        <Header
+          tenant={tenant}
+          selectedMonth={selectedMonth}
+          onMonthChange={setSelectedMonth}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenExport={() => setIsExportOpen(true)}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+
+        {/* Main Content Area */}
+        <div className="flex-1 px-3.5 pt-3.5">
+          {activeNavTab === 'DASHBOARD' && (
+            <div className="space-y-4 animate-fadeIn">
+              
+              {/* SWITCHER TAB UTAMA (UKURAN BESAR & KONTRAS TINGGI) */}
+              <div className="bg-gray-200 p-1.5 rounded-3xl border border-gray-300 grid grid-cols-2 gap-1.5 shadow-inner">
+                {/* Tab Bisnis RT/RW */}
+                <button
+                  onClick={() => setDashboardMode('BUSINESS')}
+                  type="button"
+                  className={`min-h-[52px] rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer ${
+                    dashboardMode === 'BUSINESS'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-300/50'
+                  }`}
+                >
+                  <Building2 className="w-4 h-4 stroke-[2.5]" />
+                  <span>Bisnis</span>
+                </button>
+
+                {/* Tab Pribadi / Keluarga */}
+                <button
+                  onClick={() => setDashboardMode('PERSONAL')}
+                  type="button"
+                  className={`min-h-[52px] rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer ${
+                    dashboardMode === 'PERSONAL'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-300/50'
+                  }`}
+                >
+                  <Home className="w-4 h-4 stroke-[2.5]" />
+                  <span>Pribadi</span>
+                </button>
+              </div>
+
+              {/* View Content depending on Mode */}
+              {dashboardMode === 'BUSINESS' ? (
+                <BusinessTab
+                  summary={businessSummary}
+                  bills={bills}
+                  recentTransactions={transactions}
+                  onPayBill={payRecurringBill}
+                  onOpenCustomerList={() => setActiveNavTab('CUSTOMERS')}
+                  onQuickRecord={(type, account) => handleOpenTransaction(type, account)}
+                  onAddBill={addRecurringBill}
+                  onUpdateBill={updateRecurringBill}
+                  onDeleteBill={deleteRecurringBill}
+                  onEditTransaction={(tx) => handleOpenTransaction(tx.type, tx.account, tx)}
+                  onDeleteTransaction={handleConfirmDeleteTx}
+                />
+              ) : (
+                <PersonalTab
+                  summary={personalSummary}
+                  recentTransactions={transactions}
+                  onUpdateSalary={setSalaryBudget}
+                  onEditTransaction={(tx) => handleOpenTransaction(tx.type, tx.account, tx)}
+                  onDeleteTransaction={handleConfirmDeleteTx}
+                />
+              )}
+
+            </div>
+          )}
+
+          {activeNavTab === 'CUSTOMERS' && (
+            <div className="animate-fadeIn">
+              <CustomerPage
+                customers={customers}
+                tenant={tenant}
+                onReceivePayment={receiveCustomerPayment}
+                onBackToDashboard={() => setActiveNavTab('DASHBOARD')}
+                onAddCustomer={addCustomer}
+                onUpdateCustomer={updateCustomer}
+                onDeleteCustomer={deleteCustomer}
+              />
+            </div>
+          )}
+
+          {activeNavTab === 'SETTINGS' && (
+            <div className="py-4 space-y-4 animate-fadeIn">
+              <div className="bg-white border border-gray-200 rounded-3xl p-5 text-center shadow-sm">
+                <div className="w-14 h-14 mx-auto rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+                  <Building2 className="w-7 h-7" />
+                </div>
+                <h2 className="text-lg font-black text-gray-900">{tenant.business_name}</h2>
+                <p className="text-xs text-gray-500 mt-0.5">Pemilik: {tenant.owner_name}</p>
+
+                <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
+                  <button
+                    onClick={() => setIsExportOpen(true)}
+                    className="min-h-[48px] w-full py-3 rounded-2xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-black text-xs active:scale-95 transition flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Unduh Laporan Excel & PDF ({selectedMonth})</span>
+                  </button>
+
+                  <button
+                    onClick={() => setIsSettingsOpen(true)}
+                    className="min-h-[48px] w-full py-3 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-xs active:scale-95 transition"
+                  >
+                    Kelola Nama Usaha Tenant & Cloud Supabase
+                  </button>
+
+                  <button
+                    onClick={() => setActiveNavTab('DASHBOARD')}
+                    className="min-h-[44px] w-full py-2.5 rounded-2xl bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 font-semibold text-xs active:scale-95 transition"
+                  >
+                    Kembali ke Dashboard Utama
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        {/* Fixed Bottom Bar: Huge Action Buttons + Navigation */}
+        <BottomNav
+          currentTab={activeNavTab}
+          onSelectTab={(tab) => {
+            if (tab === 'SETTINGS') {
+              setIsSettingsOpen(true);
+            } else {
+              setActiveNavTab(tab);
+            }
+          }}
+          onOpenTransaction={handleOpenTransaction}
+          unpaidCount={businessSummary.unpaidCustomers}
+        />
+
+        {/* Modal Catat Uang Masuk / Keluar */}
+        <TransactionModal
+          isOpen={isTxModalOpen}
+          initialType={txModalType}
+          initialAccount={txModalAccount}
+          editingTransaction={editingTx}
+          onClose={() => {
+            setIsTxModalOpen(false);
+            setEditingTx(null);
+          }}
+          onSave={handleSaveTransaction}
+        />
+
+        {/* Modal Kelola Tenant & Supabase */}
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          tenant={tenant}
+          businessSummary={businessSummary}
+          personalSummary={personalSummary}
+          onClose={() => setIsSettingsOpen(false)}
+          onUpdateTenant={setTenant}
+          onResetFactory={resetToFactoryDefault}
+          onOpenExport={() => setIsExportOpen(true)}
+          onLogout={logout}
+        />
+
+        {/* Modal Ekspor Laporan Bulanan (Excel & PDF) */}
+        <ExportModal
+          isOpen={isExportOpen}
+          onClose={() => setIsExportOpen(false)}
+          tenant={tenant}
+          selectedMonth={selectedMonth}
+          onMonthChange={setSelectedMonth}
+          businessSummary={businessSummary}
+          personalSummary={personalSummary}
+          transactions={transactions}
+          customers={customers}
+          bills={bills}
+        />
+
+      </div>
+    </main>
   );
 }

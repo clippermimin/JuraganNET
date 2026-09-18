@@ -1,0 +1,18 @@
+{
+  "name": "JuraganNet - Manajemen RT/RW Net Arjuna Net",
+  "short_name": "JuraganNet",
+  "description": "Aplikasi keuangan dan tagihan iuran pelanggan RT/RW Net mobile-first siap pakai untuk pengusaha gaptek.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#059669",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
