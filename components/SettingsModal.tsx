@@ -271,7 +271,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             className="w-full py-4 px-4 rounded-2xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-sm font-bold flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <RefreshCw className="w-4 h-4" />
-            <span>Reset ke Data Awal Demo (Arjuna Net)</span>
+            <span>Kosongkan Semua Data (Mulai Baru)</span>
           </button>
         </div>
 
@@ -279,9 +279,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
       <ConfirmModal
         isOpen={showResetConfirm}
-        title="Reset Semua Data?"
-        message="Apakah Anda yakin ingin mereset semua data transaksi dan pelanggan kembali ke data awal demo Arjuna Net? Tindakan ini tidak dapat dibatalkan."
-        confirmText="Ya, Reset Data"
+        title="Kosongkan Semua Data?"
+        message="Apakah Anda yakin ingin menghapus semua data transaksi, tagihan, dan pelanggan? Tindakan ini akan mengosongkan semua data dan tidak dapat dibatalkan."
+        confirmText="Ya, Kosongkan Data"
         onConfirm={() => {
           onResetFactory();
           setShowResetConfirm(false);
