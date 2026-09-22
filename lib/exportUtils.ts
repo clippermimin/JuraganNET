@@ -61,7 +61,7 @@ export function exportToExcel(data: ExportData) {
   const customerRows = customers.map(c => ({
     'ID': c.id,
     'Nama Pelanggan': c.name,
-    'Area RW': c.area,
+    'Wilayah / Server': c.area,
     'Iuran Bulanan': c.monthly_fee,
     'Status Bayar': c.is_paid ? 'LUNAS' : 'BELUM BAYAR',
     'No HP/WhatsApp': c.phone,
@@ -232,7 +232,7 @@ export function exportToPDF(data: ExportData) {
 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
-  doc.text('4. Rekapitulasi Iuran Pelanggan Per Area RW', 14, currentY);
+  doc.text('4. Rekapitulasi Iuran Pelanggan Per Wilayah / Server', 14, currentY);
   currentY += 4;
 
   // Group customers by area
@@ -261,7 +261,7 @@ export function exportToPDF(data: ExportData) {
 
   autoTable(doc, {
     startY: currentY,
-    head: [['No', 'Area RW', 'Total', 'Lunas', 'Belum', 'Terkumpul', 'Target']],
+    head: [['No', 'Wilayah / Server', 'Total', 'Lunas', 'Belum', 'Terkumpul', 'Target']],
     body: areaTable,
     theme: 'striped',
     headStyles: { fillColor: [15, 118, 110], textColor: [255, 255, 255] },

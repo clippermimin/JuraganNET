@@ -193,7 +193,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari nama pelanggan, no HP, atau area..."
+            placeholder="Cari nama pelanggan, no HP, atau wilayah/server..."
             className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-bold text-gray-900 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
           />
           {searchQuery && (
@@ -216,7 +216,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                 : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
             }`}
           >
-            Semua Area
+            Semua Wilayah / Server
           </button>
           {areas.map((area) => (
             <button
@@ -273,8 +273,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
         {filteredCustomers.length === 0 ? (
           <div className="bg-white border border-gray-200 rounded-3xl p-8 text-center shadow-sm">
             <Users className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-            <p className="text-sm font-bold text-gray-900">Tidak ada data pelanggan yang cocok</p>
-            <p className="text-xs text-gray-500 mt-1">Coba sesuaikan kata kunci pencarian atau filter area Anda</p>
+            <p className="text-sm font-bold text-gray-700">Tidak ada pelanggan ditemukan</p>
+            <p className="text-xs text-gray-500 mt-1">Coba sesuaikan kata kunci pencarian atau filter wilayah/server Anda</p>
           </div>
         ) : (
           filteredCustomers.slice(0, displayLimit).map((customer) => (
@@ -421,6 +421,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
       <CustomerModal
         isOpen={isCustomerModalOpen}
         customer={editingCustomer}
+        existingAreas={areas}
         onClose={() => setIsCustomerModalOpen(false)}
         onSave={handleSaveCustomer}
       />
@@ -463,7 +464,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
 
             <div className="bg-green-50 rounded-2xl p-3 border border-green-100 text-xs space-y-1.5 text-gray-700">
               <p><b className="text-gray-900">Pelanggan:</b> {receiptTarget.name}</p>
-              <p><b className="text-gray-900">Area:</b> {receiptTarget.area}</p>
+              <p><b className="text-gray-900">Wilayah / Server:</b> {receiptTarget.area}</p>
               <p><b className="text-gray-900">No HP:</b> {receiptTarget.phone}</p>
               <p className="text-[11px] text-green-800 pt-1">
                 Status pelanggan otomatis menjadi <b>LUNAS</b> dan mutasi telah dicatat ke kas Bisnis RT/RW.

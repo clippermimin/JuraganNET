@@ -57,7 +57,7 @@ export function getWhatsAppReceiptUrl(customer: Customer, tenant: Tenant, custom
     `Halo Bpk/Ibu *${customer.name}*,\n` +
     `Alhamdulillah pembayaran iuran internet Anda telah kami terima:\n\n` +
     `👤 *Nama:* ${customer.name}\n` +
-    `📍 *Area:* ${customer.area}\n` +
+    `📍 *Wilayah/Server:* ${customer.area}\n` +
     `💰 *Nominal:* ${formatIDR(amount)}\n` +
     `📅 *Tanggal:* ${today}\n` +
     `📌 *Status:* LUNAS (Sah)\n\n` +
