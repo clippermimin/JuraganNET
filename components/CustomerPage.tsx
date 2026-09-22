@@ -17,10 +17,11 @@ import {
   Plus,
   Pencil,
   Trash2,
-  MoreVertical
+  MoreVertical,
+  History
 } from 'lucide-react';
-import { Customer, Tenant } from '@/lib/types';
-import { formatIDR, getWhatsAppReceiptUrl, getWhatsAppReminderUrl } from '@/lib/utils';
+import { Customer, Tenant, Transaction } from '@/lib/types';
+import { formatIDR, formatDateIndo, getWhatsAppReceiptUrl, getWhatsAppReminderUrl } from '@/lib/utils';
 import confetti from 'canvas-confetti';
 import { CustomerModal } from './CustomerModal';
 import { ConfirmModal } from './ConfirmModal';
@@ -28,6 +29,7 @@ import { ConfirmModal } from './ConfirmModal';
 interface CustomerPageProps {
   customers: Customer[];
   tenant: Tenant;
+  transactions?: Transaction[];
   onReceivePayment: (customer: Customer) => void;
   onBackToDashboard: () => void;
   onAddCustomer?: (customer: Omit<Customer, 'id' | 'tenant_id' | 'is_paid'>) => void;
@@ -38,6 +40,7 @@ interface CustomerPageProps {
 export const CustomerPage: React.FC<CustomerPageProps> = ({
   customers,
   tenant,
+  transactions = [],
   onReceivePayment,
   onBackToDashboard,
   onAddCustomer,
@@ -55,6 +58,20 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [activeMenuCustId, setActiveMenuCustId] = useState<string | null>(null);
   const [customerToDelete, setCustomerToDelete] = useState<Customer | null>(null);
+  const [expandedHistoryCustId, setExpandedHistoryCustId] = useState<string | null>(null);
+  const [isQuickBillingOpen, setIsQuickBillingOpen] = useState(false);
+  const [remindedCustIds, setRemindedCustIds] = useState<Record<string, boolean>>({});
+
+  const unpaidCustomers = useMemo(() => {
+    return customers.filter(c => !c.is_paid);
+  }, [customers]);
+
+  const getCustomerPaymentHistory = (custId: string, custName: string) => {
+    if (!transactions) return [];
+    return transactions
+      .filter(t => t.customer_id === custId || (t.notes && t.notes.toLowerCase().includes(custName.toLowerCase())))
+      .slice(0, 5);
+  };
 
   const handleOpenAddModal = () => {
     setEditingCustomer(null);
@@ -180,6 +197,18 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
             <span className="text-base font-extrabold text-red-600">{unpaidCount}</span>
           </div>
         </div>
+
+        {/* Quick Billing Action Button */}
+        {unpaidCount > 0 && (
+          <button
+            onClick={() => setIsQuickBillingOpen(true)}
+            type="button"
+            className="w-full mt-3 min-h-[44px] py-2.5 px-4 rounded-2xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-extrabold text-xs shadow-md shadow-orange-500/25 flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+          >
+            <Send className="w-4 h-4" />
+            <span>Mode Tagih Cepat via WA ({unpaidCount} Belum Bayar)</span>
+          </button>
+        )}
       </div>
 
       {/* Search & Filters */}
@@ -400,6 +429,46 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                   )}
                 </div>
               </div>
+
+              {/* Collapsible Riwayat Pembayaran */}
+              <div className="mt-2.5 pt-2 border-t border-dashed border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setExpandedHistoryCustId(expandedHistoryCustId === customer.id ? null : customer.id)}
+                  className="text-[11px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 cursor-pointer py-1"
+                >
+                  <History className="w-3.5 h-3.5" />
+                  <span>
+                    {expandedHistoryCustId === customer.id ? 'Sembunyikan Riwayat Bayar' : 'Lihat Riwayat Bayar'}
+                  </span>
+                </button>
+
+                {expandedHistoryCustId === customer.id && (
+                  <div className="mt-2 p-2.5 bg-gray-50 rounded-xl border border-gray-200 space-y-1.5">
+                    {getCustomerPaymentHistory(customer.id, customer.name).length === 0 ? (
+                      <p className="text-[11px] text-gray-400 italic text-center py-1">
+                        Belum ada riwayat transaksi pembayaran tercatat
+                      </p>
+                    ) : (
+                      <div className="divide-y divide-gray-200">
+                        {getCustomerPaymentHistory(customer.id, customer.name).map((tx) => (
+                          <div key={tx.id} className="py-1.5 flex items-center justify-between text-[11px]">
+                            <div>
+                              <p className="font-bold text-gray-800">
+                                {formatDateIndo(tx.created_at)}
+                              </p>
+                              <p className="text-[10px] text-gray-500">{tx.notes || 'Iuran Bulanan'}</p>
+                            </div>
+                            <span className="font-extrabold text-green-600">
+                              {formatIDR(tx.amount)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           ))
         )}
@@ -489,6 +558,95 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                 className="min-h-[46px] w-full py-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-semibold transition active:scale-95"
               >
                 Selesai (Nanti Saja)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL PENAGIHAN CEPAT VIA WA */}
+      {isQuickBillingOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-white border-t sm:border-2 border-orange-500 rounded-t-[32px] sm:rounded-3xl p-5 max-w-lg w-full shadow-2xl animate-slideUp space-y-4 text-gray-900 max-h-[90vh] flex flex-col">
+            <div className="flex items-start justify-between flex-shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0">
+                  <Send className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base text-gray-900 leading-tight">
+                    Mode Tagih Cepat via WA
+                  </h3>
+                  <p className="text-xs text-orange-600 font-semibold">
+                    {unpaidCustomers.length} pelanggan belum lunas
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsQuickBillingOpen(false)}
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-orange-50 rounded-2xl p-3 border border-orange-200 text-xs text-orange-950 flex-shrink-0">
+              <p className="font-bold text-orange-900 mb-0.5">💡 Tips Penagihan Merakyat:</p>
+              <p className="text-[11px] text-orange-800">
+                Klik tombol &quot;Kirim WA&quot; di tiap pelanggan. WhatsApp Web/App akan terbuka otomatis dengan format pesan sopan & nomor rekening Anda.
+              </p>
+            </div>
+
+            {/* List of Unpaid Customers */}
+            <div className="flex-1 overflow-y-auto divide-y divide-gray-100 pr-1 space-y-1">
+              {unpaidCustomers.map((cust) => {
+                const isReminded = remindedCustIds[cust.id];
+                return (
+                  <div key={cust.id} className="py-2.5 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <h4 className="font-extrabold text-sm text-gray-900 truncate">
+                        {cust.name}
+                      </h4>
+                      <p className="text-[11px] text-gray-500 truncate">
+                        {cust.area} • <b className="text-gray-900">{formatIDR(cust.monthly_fee)}</b>
+                      </p>
+                    </div>
+
+                    <a
+                      href={getWhatsAppReminderUrl(cust, tenant)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setRemindedCustIds(prev => ({ ...prev, [cust.id]: true }))}
+                      className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 flex-shrink-0 ${
+                        isReminded
+                          ? 'bg-green-100 text-green-700 border border-green-200 hover:bg-green-200'
+                          : 'bg-green-600 hover:bg-green-700 text-white shadow-sm'
+                      }`}
+                    >
+                      {isReminded ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Sudah di-WA</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Kirim WA</span>
+                        </>
+                      )}
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-2 border-t border-gray-100 flex-shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsQuickBillingOpen(false)}
+                className="w-full min-h-[46px] py-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition active:scale-95 cursor-pointer"
+              >
+                Selesai / Tutup
               </button>
             </div>
           </div>

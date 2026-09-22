@@ -14,6 +14,7 @@ import { SuperAdminPage } from '@/components/SuperAdminPage';
 import { LoginPage } from '@/components/LoginPage';
 import { PwaPrompt } from '@/components/PwaPrompt';
 import { GreetingBanner } from '@/components/GreetingBanner';
+import { OnboardingModal } from '@/components/OnboardingModal';
 import { Building2, Home, Sparkles, FileSpreadsheet, FileText, Download, Hexagon, Zap } from 'lucide-react';
 import { TransactionType, AccountType, Transaction } from '@/lib/types';
 
@@ -66,6 +67,17 @@ export default function HomeApp() {
   // Settings & Export Modal States
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+
+  // Auto show onboarding for first-time / gaptek users
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const done = localStorage.getItem('juragannet_onboarding_done');
+      if (!done) {
+        setIsOnboardingOpen(true);
+      }
+    }
+  }, []);
 
   // Handlers
   const handleOpenTransaction = (type: TransactionType, account?: AccountType, transaction?: Transaction) => {
@@ -168,6 +180,18 @@ export default function HomeApp() {
               
               <GreetingBanner ownerName={tenant.owner_name} />
 
+              {/* Panduan Singkat Button for quick access */}
+              <div className="flex items-center justify-between px-1">
+                <button
+                  onClick={() => setIsOnboardingOpen(true)}
+                  type="button"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-full transition active:scale-95 cursor-pointer shadow-xs"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Panduan Singkat 3 Langkah 💡</span>
+                </button>
+              </div>
+
               {/* SWITCHER TAB UTAMA (UKURAN BESAR & KONTRAS TINGGI) */}
               <div className="bg-gray-200 p-1.5 rounded-3xl border border-gray-300 grid grid-cols-2 gap-1.5 shadow-inner">
                 {/* Tab Bisnis RT/RW */}
@@ -232,6 +256,7 @@ export default function HomeApp() {
               <CustomerPage
                 customers={customers}
                 tenant={tenant}
+                transactions={transactions}
                 onReceivePayment={receiveCustomerPayment}
                 onBackToDashboard={() => setActiveNavTab('DASHBOARD')}
                 onAddCustomer={addCustomer}
@@ -329,6 +354,12 @@ export default function HomeApp() {
           transactions={transactions}
           customers={customers}
           bills={bills}
+        />
+
+        {/* Modal Panduan Singkat Onboarding */}
+        <OnboardingModal
+          isOpen={isOnboardingOpen}
+          onClose={() => setIsOnboardingOpen(false)}
         />
 
       </div>

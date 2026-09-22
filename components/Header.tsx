@@ -4,6 +4,7 @@ import React from 'react';
 import { Hexagon, Calendar, Settings, ShieldCheck, Database, Download } from 'lucide-react';
 import { Tenant } from '@/lib/types';
 import { isSupabaseConfigured } from '@/lib/supabase';
+import { getRecentMonthOptions } from '@/lib/store';
 
 interface HeaderProps {
   tenant: Tenant;
@@ -13,13 +14,6 @@ interface HeaderProps {
   onOpenExport: () => void;
 }
 
-const MONTH_OPTIONS = [
-  'September 2026',
-  'Agustus 2026',
-  'Juli 2026',
-  'Juni 2026',
-];
-
 export const Header: React.FC<HeaderProps> = ({
   tenant,
   selectedMonth,
@@ -27,6 +21,14 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSettings,
   onOpenExport,
 }) => {
+  const monthOptions = React.useMemo(() => {
+    const list = getRecentMonthOptions(6);
+    if (selectedMonth && !list.includes(selectedMonth)) {
+      return [selectedMonth, ...list];
+    }
+    return list;
+  }, [selectedMonth]);
+
   return (
     <header className="sticky top-0 z-30 bg-blue-600 text-white px-4 py-3 shadow-sm">
       <div className="flex items-center justify-between gap-2">
@@ -68,7 +70,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onChange={(e) => onMonthChange(e.target.value)}
                 className="bg-transparent text-xs font-semibold text-white outline-none cursor-pointer pr-1"
               >
-                {MONTH_OPTIONS.map((m) => (
+                {monthOptions.map((m) => (
                   <option key={m} value={m} className="bg-white text-gray-900">
                     {m}
                   </option>

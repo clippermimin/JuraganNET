@@ -13,7 +13,31 @@ const STORAGE_KEYS = {
   BILLS: 'juragannet_bills',
   SALARY_BUDGET: 'juragannet_salary_budget',
   SESSION: 'juragannet_auth_session',
+  LAST_RESET_MONTH: 'juragannet_last_reset_month',
 };
+
+export const INDO_MONTHS = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
+
+export function formatMonthLabel(date: Date): string {
+  return `${INDO_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+export function getCurrentMonthLabel(): string {
+  return formatMonthLabel(new Date());
+}
+
+export function getRecentMonthOptions(count: number = 6): string[] {
+  const options: string[] = [];
+  const now = new Date();
+  for (let i = 0; i < count; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    options.push(formatMonthLabel(d));
+  }
+  return options;
+}
 
 export function generateUUID(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -35,7 +59,7 @@ export function useJuraganStore() {
   const [bills, setBills] = useState<RecurringBill[]>([]);
   const [salaryBudget, setSalaryBudget] = useState<number>(5000000);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [selectedMonth, setSelectedMonth] = useState<string>('September 2026');
+  const [selectedMonth, setSelectedMonth] = useState<string>(getCurrentMonthLabel());
 
   // Load initial data from Supabase (or fallback to localStorage)
   useEffect(() => {
@@ -133,6 +157,38 @@ export function useJuraganStore() {
         const storedSalary = localStorage.getItem(STORAGE_KEYS.SALARY_BUDGET);
         if (storedSalary) {
           setSalaryBudget(Number(storedSalary));
+        }
+
+        // Check for new calendar month reset (Tagihan Pelanggan & Bills)
+        const currentMonthName = getCurrentMonthLabel();
+        const lastResetMonth = localStorage.getItem(STORAGE_KEYS.LAST_RESET_MONTH);
+
+        if (!lastResetMonth) {
+          localStorage.setItem(STORAGE_KEYS.LAST_RESET_MONTH, currentMonthName);
+        } else if (lastResetMonth !== currentMonthName) {
+          // Month has rolled over! Reset unpaid status for recurring billing
+          setCustomers(prev => {
+            const resetCust = prev.map(c => ({ ...c, is_paid: false }));
+            localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(resetCust));
+            return resetCust;
+          });
+          setBills(prev => {
+            const resetB = prev.map(b => ({ ...b, is_paid: false }));
+            localStorage.setItem(STORAGE_KEYS.BILLS, JSON.stringify(resetB));
+            return resetB;
+          });
+          localStorage.setItem(STORAGE_KEYS.LAST_RESET_MONTH, currentMonthName);
+
+          if (isSupabaseConfigured && supabase) {
+            try {
+              Promise.all([
+                supabase.from('customers').update({ is_paid: false }).neq('id', '00000000-0000-0000-0000-000000000000'),
+                supabase.from('recurring_bills').update({ is_paid: false }).neq('id', '00000000-0000-0000-0000-000000000000'),
+              ]).catch(err => console.warn('Failed resetting cloud statuses for new month:', err));
+            } catch (resetErr) {
+              console.warn('Failed resetting cloud statuses for new month:', resetErr);
+            }
+          }
         }
       } catch (err) {
         console.error('Failed to load storage data:', err);
@@ -481,11 +537,22 @@ export function useJuraganStore() {
     }
   }, [bills, saveBills]);
 
-  // Reset all bills status (e.g. at new month)
+  // Reset all bills & customer statuses for new month (Manual Action)
   const resetBillsForNewMonth = useCallback(() => {
-    const updated = bills.map(b => ({ ...b, is_paid: false }));
-    saveBills(updated);
-  }, [bills, saveBills]);
+    const updatedBills = bills.map(b => ({ ...b, is_paid: false }));
+    const updatedCustomers = customers.map(c => ({ ...c, is_paid: false }));
+    saveBills(updatedBills);
+    saveCustomers(updatedCustomers);
+
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('recurring_bills').update({ is_paid: false }).neq('id', '00000000-0000-0000-0000-000000000000').then(({ error }) => {
+        if (error) console.error('Supabase error resetting bills:', error);
+      });
+      supabase.from('customers').update({ is_paid: false }).neq('id', '00000000-0000-0000-0000-000000000000').then(({ error }) => {
+        if (error) console.error('Supabase error resetting customers:', error);
+      });
+    }
+  }, [bills, customers, saveBills, saveCustomers]);
 
   // Reset / Kosongkan semua data (Mulai Baru) secara lokal dan di cloud Supabase
   const resetToFactoryDefault = useCallback(async () => {
@@ -514,49 +581,46 @@ export function useJuraganStore() {
     }
   }, []);
 
-  // Derived state for Month Simulation
-  const derivedCustomers = useMemo(() => {
-    if (selectedMonth === 'September 2026') return customers;
-    // Simulate difference for past months
-    const offset = selectedMonth.length;
-    return customers.map((c, i) => {
-      if (i % 3 === 0) return { ...c, is_paid: false };
-      return c;
-    });
-  }, [customers, selectedMonth]);
-
-  // Compute Business Summary
+  // Compute Business Summary based on real transactions for selectedMonth
   const businessSummary: BusinessSummary = useMemo(() => {
-    const bizTransactions = transactions.filter(t => t.account === 'BUSINESS');
-    let totalIn = bizTransactions
+    const bizTransactions = transactions.filter(t => {
+      if (t.account !== 'BUSINESS') return false;
+      if (!t.created_at) return true;
+      const d = new Date(t.created_at);
+      if (isNaN(d.getTime())) return true;
+      return formatMonthLabel(d) === selectedMonth;
+    });
+
+    const totalIn = bizTransactions
       .filter(t => t.type === 'IN')
       .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-    let totalOut = bizTransactions
+    const totalOut = bizTransactions
       .filter(t => t.type === 'OUT')
       .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
-    const paidCustCount = derivedCustomers.filter(c => c.is_paid).length;
-    const unpaidCustCount = derivedCustomers.length - paidCustCount;
-
-    if (selectedMonth !== 'September 2026') {
-      const offset = selectedMonth.length;
-      totalIn = Math.max(0, totalIn - (offset * 800000));
-      totalOut = Math.max(0, totalOut - (offset * 150000));
-    }
+    const paidCustCount = customers.filter(c => c.is_paid).length;
+    const unpaidCustCount = customers.length - paidCustCount;
 
     return {
       totalIn,
       totalOut,
       netProfit: totalIn - totalOut,
-      totalCustomers: derivedCustomers.length,
+      totalCustomers: customers.length,
       paidCustomers: paidCustCount,
       unpaidCustomers: unpaidCustCount,
     };
-  }, [transactions, derivedCustomers, selectedMonth]);
+  }, [transactions, customers, selectedMonth]);
 
-  // Compute Personal Summary & Leak Detection
+  // Compute Personal Summary & Leak Detection for selectedMonth
   const personalSummary: PersonalSummary = useMemo(() => {
-    const persTransactions = transactions.filter(t => t.account === 'PERSONAL' && t.type === 'OUT');
+    const persTransactions = transactions.filter(t => {
+      if (t.account !== 'PERSONAL' || t.type !== 'OUT') return false;
+      if (!t.created_at) return true;
+      const d = new Date(t.created_at);
+      if (isNaN(d.getTime())) return true;
+      return formatMonthLabel(d) === selectedMonth;
+    });
+
     const totalOut = persTransactions.reduce((sum, t) => sum + Number(t.amount || 0), 0);
     const safeBalance = salaryBudget - totalOut;
 
@@ -582,7 +646,7 @@ export function useJuraganStore() {
       safeBalance,
       topLeaks,
     };
-  }, [transactions, salaryBudget]);
+  }, [transactions, salaryBudget, selectedMonth]);
 
   // Action: Add New Tenant (Super Admin)
   const addTenant = useCallback((newTenantData: Omit<Tenant, 'id' | 'created_at'>) => {
@@ -721,7 +785,7 @@ export function useJuraganStore() {
     selectedMonth,
     setSelectedMonth,
     transactions,
-    customers: derivedCustomers,
+    customers,
     bills,
     salaryBudget,
     setSalaryBudget: saveSalaryBudget,

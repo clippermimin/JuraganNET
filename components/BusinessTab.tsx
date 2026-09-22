@@ -89,23 +89,59 @@ export const BusinessTab: React.FC<BusinessTabProps> = ({
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
             <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
-              Net Profit (Laba Bersih)
+              Keuntungan Bersih (Cuan Bersih)
             </span>
           </div>
           <span className="text-[11px] bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded-full border border-blue-100">
-            Realistis Kas
+            Uang Kas Riil
           </span>
         </div>
 
         {/* Big Net Profit Number */}
         <div className="my-1 relative z-10">
-          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight">
+          <h2 className={`text-3xl sm:text-4xl font-black tracking-tight leading-tight ${
+            summary.netProfit >= 0 ? 'text-gray-900' : 'text-red-600'
+          }`}>
             {formatIDR(summary.netProfit)}
           </h2>
           <p className="text-xs text-gray-500 mt-1">
-            Total Revenue dikurangi semua pengeluaran (OPEX)
+            Total Uang Masuk dikurangi semua Pengeluaran Operasional
           </p>
         </div>
+
+        {/* Profit / Loss Visual Status Banner */}
+        {summary.netProfit > 0 ? (
+          <div className="mt-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-2.5 relative z-10">
+            <span className="text-xl flex-shrink-0">🎉</span>
+            <div>
+              <p className="text-xs font-black text-emerald-800">
+                BULAN INI UNTUNG: {formatIDR(summary.netProfit)}
+              </p>
+              <p className="text-[11px] text-emerald-600 mt-0.5">
+                Pemasukan lebih besar dari operasional. Bisnis RT/RW Net Anda sehat!
+              </p>
+            </div>
+          </div>
+        ) : summary.netProfit < 0 ? (
+          <div className="mt-3 p-3 rounded-2xl bg-red-50 border border-red-200 flex items-center gap-2.5 relative z-10">
+            <span className="text-xl flex-shrink-0">⚠️</span>
+            <div>
+              <p className="text-xs font-black text-red-800">
+                AWAS RUGI: -{formatIDR(Math.abs(summary.netProfit))}
+              </p>
+              <p className="text-[11px] text-red-600 mt-0.5">
+                Pengeluaran melampaui pemasukan. Segera tagih pelanggan yang belum bayar!
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-3 p-2.5 rounded-2xl bg-gray-50 border border-gray-200 flex items-center gap-2 relative z-10">
+            <span className="text-base flex-shrink-0">⚖️</span>
+            <p className="text-xs font-bold text-gray-700">
+              Kas Seimbang: Belum ada selisih untung / rugi tercatat.
+            </p>
+          </div>
+        )}
 
         {/* Sub Cards: Total In vs Total Out */}
         <div className="grid grid-cols-2 gap-2.5 mt-4 pt-4 border-t border-gray-100 relative z-10">
@@ -113,26 +149,26 @@ export const BusinessTab: React.FC<BusinessTabProps> = ({
             <div>
               <div className="flex items-center gap-1.5 text-green-600 text-[11px] font-black uppercase tracking-wider mb-1">
                 <ArrowDownLeft className="w-4 h-4 text-green-600" />
-                <span>Revenue</span>
+                <span>Pemasukan (Masuk)</span>
               </div>
               <p className="text-lg font-extrabold text-gray-900 leading-none mt-2">
                 {formatIDR(summary.totalIn)}
               </p>
             </div>
-            <p className="text-[10px] text-gray-500 mt-1.5 leading-tight">Total pemasukan</p>
+            <p className="text-[10px] text-gray-500 mt-1.5 leading-tight">Total uang masuk bisnis</p>
           </div>
 
           <div className="bg-gray-50 rounded-2xl p-3 border border-gray-100 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-1.5 text-red-500 text-[11px] font-black uppercase tracking-wider mb-1">
                 <ArrowUpRight className="w-4 h-4 text-red-500" />
-                <span>Expenses</span>
+                <span>Pengeluaran (Keluar)</span>
               </div>
               <p className="text-lg font-extrabold text-gray-900 leading-none mt-2">
                 {formatIDR(summary.totalOut)}
               </p>
             </div>
-            <p className="text-[10px] text-gray-500 mt-1.5 leading-tight">Total pengeluaran</p>
+            <p className="text-[10px] text-gray-500 mt-1.5 leading-tight">Total uang keluar bisnis</p>
           </div>
         </div>
 
@@ -175,10 +211,10 @@ export const BusinessTab: React.FC<BusinessTabProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-sm text-gray-900 leading-tight">
-                Operational Expenses (OPEX)
+                Kewajiban Rutin Operasional (OPEX)
               </h3>
               <p className="text-[11px] text-gray-500">
-                Tagihan operasional tetap yang harus dibayar
+                Tagihan operasional tetap (ISP, Listrik Server, Sewa Tiang, dll)
               </p>
             </div>
           </div>
