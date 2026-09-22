@@ -50,7 +50,6 @@ export default function HomeApp() {
     addRecurringBill,
     updateRecurringBill,
     deleteRecurringBill,
-    resetToFactoryDefault,
   } = useJuraganStore();
 
   // Navigation State
@@ -314,7 +313,6 @@ export default function HomeApp() {
           personalSummary={personalSummary}
           onClose={() => setIsSettingsOpen(false)}
           onUpdateTenant={updateTenant}
-          onResetFactory={resetToFactoryDefault}
           onOpenExport={() => setIsExportOpen(true)}
           onLogout={logout}
         />

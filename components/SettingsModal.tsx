@@ -7,7 +7,6 @@ import {
   Check, 
   Database, 
   Share2, 
-  RefreshCw, 
   ShieldCheck, 
   User, 
   Phone,
@@ -18,7 +17,6 @@ import {
 } from 'lucide-react';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { formatIDR } from '@/lib/utils';
-import { ConfirmModal } from './ConfirmModal';
 import { Tenant, BusinessSummary, PersonalSummary } from '@/lib/types';
 
 interface SettingsModalProps {
@@ -28,7 +26,6 @@ interface SettingsModalProps {
   personalSummary: PersonalSummary;
   onClose: () => void;
   onUpdateTenant: (tenant: Tenant) => void;
-  onResetFactory: () => void | Promise<void>;
   onOpenExport: () => void;
   onOpenSuperAdmin?: () => void;
   onLogout?: () => void;
@@ -41,7 +38,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   personalSummary,
   onClose,
   onUpdateTenant,
-  onResetFactory,
   onOpenExport,
   onOpenSuperAdmin,
   onLogout,
@@ -50,8 +46,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [ownerName, setOwnerName] = useState(tenant.owner_name);
   const [phone, setPhone] = useState(tenant.phone || '');
   const [copiedText, setCopiedText] = useState(false);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
 
   if (!isOpen) return null;
 
@@ -263,41 +257,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </button>
           </div>
         )}
-
-        {/* 8. Reset Data Factory */}
-        <div className="pt-2">
-          <button
-            onClick={() => setShowResetConfirm(true)}
-            type="button"
-            className="w-full py-4 px-4 rounded-2xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-sm font-bold flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
-          >
-            <RefreshCw className="w-4 h-4" />
-            <span>Kosongkan Semua Data (Mulai Baru)</span>
-          </button>
-        </div>
-
       </div>
-
-      <ConfirmModal
-        isOpen={showResetConfirm}
-        title="Kosongkan Semua Data?"
-        message="Apakah Anda yakin ingin menghapus semua data transaksi, tagihan, dan pelanggan? Tindakan ini akan mengosongkan data di perangkat ini dan di cloud Supabase secara permanen."
-        confirmText="Ya, Kosongkan Data"
-        isLoading={isResetting}
-        onConfirm={async () => {
-          setIsResetting(true);
-          try {
-            await onResetFactory();
-            setShowResetConfirm(false);
-            onClose();
-          } catch (err) {
-            console.error('Gagal mengosongkan data:', err);
-          } finally {
-            setIsResetting(false);
-          }
-        }}
-        onCancel={() => !isResetting && setShowResetConfirm(false)}
-      />
     </div>
   );
 };
