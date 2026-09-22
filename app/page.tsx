@@ -313,7 +313,7 @@ export default function HomeApp() {
           businessSummary={businessSummary}
           personalSummary={personalSummary}
           onClose={() => setIsSettingsOpen(false)}
-          onUpdateTenant={setTenant}
+          onUpdateTenant={updateTenant}
           onResetFactory={resetToFactoryDefault}
           onOpenExport={() => setIsExportOpen(true)}
           onLogout={logout}

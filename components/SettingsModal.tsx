@@ -28,7 +28,7 @@ interface SettingsModalProps {
   personalSummary: PersonalSummary;
   onClose: () => void;
   onUpdateTenant: (tenant: Tenant) => void;
-  onResetFactory: () => void;
+  onResetFactory: () => void | Promise<void>;
   onOpenExport: () => void;
   onOpenSuperAdmin?: () => void;
   onLogout?: () => void;
@@ -51,6 +51,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [phone, setPhone] = useState(tenant.phone || '');
   const [copiedText, setCopiedText] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   if (!isOpen) return null;
 
@@ -280,14 +281,22 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       <ConfirmModal
         isOpen={showResetConfirm}
         title="Kosongkan Semua Data?"
-        message="Apakah Anda yakin ingin menghapus semua data transaksi, tagihan, dan pelanggan? Tindakan ini akan mengosongkan semua data dan tidak dapat dibatalkan."
+        message="Apakah Anda yakin ingin menghapus semua data transaksi, tagihan, dan pelanggan? Tindakan ini akan mengosongkan data di perangkat ini dan di cloud Supabase secara permanen."
         confirmText="Ya, Kosongkan Data"
-        onConfirm={() => {
-          onResetFactory();
-          setShowResetConfirm(false);
-          onClose();
+        isLoading={isResetting}
+        onConfirm={async () => {
+          setIsResetting(true);
+          try {
+            await onResetFactory();
+            setShowResetConfirm(false);
+            onClose();
+          } catch (err) {
+            console.error('Gagal mengosongkan data:', err);
+          } finally {
+            setIsResetting(false);
+          }
         }}
-        onCancel={() => setShowResetConfirm(false)}
+        onCancel={() => !isResetting && setShowResetConfirm(false)}
       />
     </div>
   );

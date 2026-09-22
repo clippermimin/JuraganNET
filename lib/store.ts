@@ -15,6 +15,17 @@ const STORAGE_KEYS = {
   SESSION: 'juragannet_auth_session',
 };
 
+export function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 export function useJuraganStore() {
   const [tenant, setTenant] = useState<Tenant>(DEFAULT_TENANT);
   const [tenants, setTenants] = useState<Tenant[]>(INITIAL_TENANTS);
@@ -39,32 +50,44 @@ export function useJuraganStore() {
         if (isSupabaseConfigured && supabase) {
           try {
             const [
-              { data: tData },
-              { data: cData },
-              { data: txData },
-              { data: bData }
+              { data: tData, error: tErr },
+              { data: cData, error: cErr },
+              { data: txData, error: txErr },
+              { data: bData, error: bErr }
             ] = await Promise.all([
-              supabase.from('tenants').select('*'),
+              supabase.from('tenants').select('*').order('created_at', { ascending: true }),
               supabase.from('customers').select('*').order('name', { ascending: true }),
               supabase.from('transactions').select('*').order('created_at', { ascending: false }),
               supabase.from('recurring_bills').select('*')
             ]);
 
-            if (tData && tData.length > 0) {
-              setTenants(tData);
-              const currentTenantId = JSON.parse(storedSession || '{}')?.tenantId;
-              const activeT = tData.find((t: any) => t.id === currentTenantId) || tData[0];
-              if (activeT) setTenant(activeT);
-            } else if (tData && tData.length === 0) {
-              // Empty database, maybe first run. Keep defaults.
-              setTenants(INITIAL_TENANTS);
+            if (tErr || cErr || txErr || bErr) {
+              console.warn('Supabase query error, falling back to local storage if available:', { tErr, cErr, txErr, bErr });
+            } else {
+              if (tData && tData.length > 0) {
+                setTenants(tData);
+                const currentTenantId = JSON.parse(storedSession || '{}')?.tenantId;
+                const activeT = tData.find((t: any) => t.id === currentTenantId) || tData[0];
+                if (activeT) setTenant(activeT);
+              } else if (tData && tData.length === 0) {
+                setTenants(INITIAL_TENANTS);
+              }
+
+              const safeCustomers = cData || [];
+              const safeTransactions = txData || [];
+              const safeBills = bData || [];
+
+              setCustomers(safeCustomers);
+              setTransactions(safeTransactions);
+              setBills(safeBills);
+
+              // Cache to localStorage
+              localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(safeCustomers));
+              localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(safeTransactions));
+              localStorage.setItem(STORAGE_KEYS.BILLS, JSON.stringify(safeBills));
+
+              loadedFromSupabase = true;
             }
-
-            if (cData) setCustomers(cData);
-            if (txData) setTransactions(txData);
-            if (bData) setBills(bData);
-
-            loadedFromSupabase = true;
           } catch (e) {
             console.error('Failed fetching from Supabase, falling back to local:', e);
           }
@@ -84,14 +107,14 @@ export function useJuraganStore() {
             localStorage.setItem(STORAGE_KEYS.TENANTS_LIST, JSON.stringify(INITIAL_TENANTS));
           }
           
-          if (storedTx) {
+          if (storedTx !== null) {
             setTransactions(JSON.parse(storedTx));
           } else {
             setTransactions(INITIAL_TRANSACTIONS);
             localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(INITIAL_TRANSACTIONS));
           }
 
-          if (storedCust) {
+          if (storedCust !== null) {
             setCustomers(JSON.parse(storedCust));
           } else {
             const initialCust = generateMockCustomers();
@@ -99,7 +122,7 @@ export function useJuraganStore() {
             localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(initialCust));
           }
 
-          if (storedBills) {
+          if (storedBills !== null) {
             setBills(JSON.parse(storedBills));
           } else {
             setBills(INITIAL_RECURRING_BILLS);
@@ -112,7 +135,7 @@ export function useJuraganStore() {
           setSalaryBudget(Number(storedSalary));
         }
       } catch (err) {
-        console.error('Failed to load local storage data:', err);
+        console.error('Failed to load storage data:', err);
         setTransactions(INITIAL_TRANSACTIONS);
         setCustomers(generateMockCustomers());
         setBills(INITIAL_RECURRING_BILLS);
@@ -151,6 +174,15 @@ export function useJuraganStore() {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.TENANT, JSON.stringify(newTenant));
     }
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('tenants').update({
+        business_name: newTenant.business_name,
+        owner_name: newTenant.owner_name,
+        phone: newTenant.phone,
+      }).eq('id', newTenant.id).then(({ error }) => {
+        if (error) console.error('Supabase sync error for save tenant:', error);
+      });
+    }
   }, []);
 
   const saveSalaryBudget = useCallback((budget: number) => {
@@ -170,14 +202,14 @@ export function useJuraganStore() {
     customerId?: string
   ) => {
     const newTx: Transaction = {
-      id: `tx-${Date.now()}`,
+      id: generateUUID(),
       tenant_id: tenant.id,
       type,
       account,
       category,
       amount,
       notes: notes || '',
-      customer_id: customerId,
+      customer_id: customerId || undefined,
       created_at: new Date().toISOString(),
     };
 
@@ -185,7 +217,17 @@ export function useJuraganStore() {
 
     // Background sync to Supabase if configured
     if (isSupabaseConfigured && supabase) {
-      supabase.from('transactions').insert([newTx]).then(({ error }) => {
+      supabase.from('transactions').insert([{
+        id: newTx.id,
+        tenant_id: newTx.tenant_id,
+        type: newTx.type,
+        account: newTx.account,
+        category: newTx.category,
+        amount: newTx.amount,
+        notes: newTx.notes,
+        customer_id: newTx.customer_id || null,
+        created_at: newTx.created_at,
+      }]).then(({ error }) => {
         if (error) console.error('Supabase sync error for transaction:', error);
       });
     }
@@ -199,7 +241,14 @@ export function useJuraganStore() {
     saveTransactions(updated);
 
     if (isSupabaseConfigured && supabase) {
-      supabase.from('transactions').update(updatedTx).eq('id', updatedTx.id).then(({ error }) => {
+      supabase.from('transactions').update({
+        type: updatedTx.type,
+        account: updatedTx.account,
+        category: updatedTx.category,
+        amount: updatedTx.amount,
+        notes: updatedTx.notes,
+        customer_id: updatedTx.customer_id || null,
+      }).eq('id', updatedTx.id).then(({ error }) => {
         if (error) console.error('Supabase sync error for update transaction:', error);
       });
     }
@@ -227,9 +276,9 @@ export function useJuraganStore() {
     );
     saveCustomers(updatedCustomers);
 
-    // 2. Automatically create Business IN transaction
+    // 2. Automatically create Business IN transaction with standard UUID
     const newTx: Transaction = {
-      id: `tx-cust-${Date.now()}`,
+      id: generateUUID(),
       tenant_id: tenant.id,
       type: 'IN',
       account: 'BUSINESS',
@@ -244,8 +293,22 @@ export function useJuraganStore() {
 
     // Sync to Supabase
     if (isSupabaseConfigured && supabase) {
-      supabase.from('customers').update({ is_paid: true }).eq('id', customer.id);
-      supabase.from('transactions').insert([newTx]);
+      supabase.from('customers').update({ is_paid: true, updated_at: new Date().toISOString() }).eq('id', customer.id).then(({ error }) => {
+        if (error) console.error('Supabase error updating customer payment:', error);
+      });
+      supabase.from('transactions').insert([{
+        id: newTx.id,
+        tenant_id: newTx.tenant_id,
+        type: newTx.type,
+        account: newTx.account,
+        category: newTx.category,
+        amount: newTx.amount,
+        notes: newTx.notes,
+        customer_id: newTx.customer_id || null,
+        created_at: newTx.created_at,
+      }]).then(({ error }) => {
+        if (error) console.error('Supabase error inserting payment transaction:', error);
+      });
     }
 
     return newTx;
@@ -263,9 +326,9 @@ export function useJuraganStore() {
     );
     saveBills(updatedBills);
 
-    // 2. Automatically record OUT transaction
+    // 2. Automatically record OUT transaction with standard UUID
     const newTx: Transaction = {
-      id: `tx-bill-${Date.now()}`,
+      id: generateUUID(),
       tenant_id: tenant.id,
       type: 'OUT',
       account: bill.account,
@@ -279,8 +342,21 @@ export function useJuraganStore() {
 
     // Sync to Supabase
     if (isSupabaseConfigured && supabase) {
-      supabase.from('recurring_bills').update({ is_paid: true, last_paid_at: new Date().toISOString() }).eq('id', bill.id);
-      supabase.from('transactions').insert([newTx]);
+      supabase.from('recurring_bills').update({ is_paid: true, last_paid_at: new Date().toISOString() }).eq('id', bill.id).then(({ error }) => {
+        if (error) console.error('Supabase error updating recurring bill status:', error);
+      });
+      supabase.from('transactions').insert([{
+        id: newTx.id,
+        tenant_id: newTx.tenant_id,
+        type: newTx.type,
+        account: newTx.account,
+        category: newTx.category,
+        amount: newTx.amount,
+        notes: newTx.notes,
+        created_at: newTx.created_at,
+      }]).then(({ error }) => {
+        if (error) console.error('Supabase error inserting bill transaction:', error);
+      });
     }
 
     return newTx;
@@ -290,7 +366,7 @@ export function useJuraganStore() {
   const addCustomer = useCallback((customerData: Omit<Customer, 'id' | 'tenant_id' | 'is_paid'>) => {
     const newCustomer: Customer = {
       ...customerData,
-      id: `cust-${Date.now()}`,
+      id: generateUUID(),
       tenant_id: tenant.id,
       is_paid: false,
       updated_at: new Date().toISOString(),
@@ -299,7 +375,16 @@ export function useJuraganStore() {
     saveCustomers(updated);
 
     if (isSupabaseConfigured && supabase) {
-      supabase.from('customers').insert([newCustomer]).then(({ error }) => {
+      supabase.from('customers').insert([{
+        id: newCustomer.id,
+        tenant_id: newCustomer.tenant_id,
+        name: newCustomer.name,
+        area: newCustomer.area,
+        monthly_fee: newCustomer.monthly_fee,
+        phone: newCustomer.phone || null,
+        is_paid: newCustomer.is_paid,
+        notes: newCustomer.notes || null,
+      }]).then(({ error }) => {
         if (error) console.error('Supabase sync error for add customer:', error);
       });
     }
@@ -312,7 +397,15 @@ export function useJuraganStore() {
     saveCustomers(updated);
 
     if (isSupabaseConfigured && supabase) {
-      supabase.from('customers').update(updatedCust).eq('id', updatedCust.id).then(({ error }) => {
+      supabase.from('customers').update({
+        name: updatedCust.name,
+        area: updatedCust.area,
+        monthly_fee: updatedCust.monthly_fee,
+        phone: updatedCust.phone || null,
+        is_paid: updatedCust.is_paid,
+        notes: updatedCust.notes || null,
+        updated_at: new Date().toISOString(),
+      }).eq('id', updatedCust.id).then(({ error }) => {
         if (error) console.error('Supabase sync error for update customer:', error);
       });
     }
@@ -334,7 +427,7 @@ export function useJuraganStore() {
   const addRecurringBill = useCallback((billData: Omit<RecurringBill, 'id' | 'tenant_id' | 'is_paid'>) => {
     const newBill: RecurringBill = {
       ...billData,
-      id: `bill-${Date.now()}`,
+      id: generateUUID(),
       tenant_id: tenant.id,
       is_paid: false,
     };
@@ -342,7 +435,15 @@ export function useJuraganStore() {
     saveBills(updated);
 
     if (isSupabaseConfigured && supabase) {
-      supabase.from('recurring_bills').insert([newBill]).then(({ error }) => {
+      supabase.from('recurring_bills').insert([{
+        id: newBill.id,
+        tenant_id: newBill.tenant_id,
+        title: newBill.title,
+        amount: newBill.amount,
+        account: newBill.account,
+        due_day: newBill.due_day,
+        is_paid: newBill.is_paid,
+      }]).then(({ error }) => {
         if (error) console.error('Supabase sync error for add bill:', error);
       });
     }
@@ -355,7 +456,14 @@ export function useJuraganStore() {
     saveBills(updated);
 
     if (isSupabaseConfigured && supabase) {
-      supabase.from('recurring_bills').update(updatedBill).eq('id', updatedBill.id).then(({ error }) => {
+      supabase.from('recurring_bills').update({
+        title: updatedBill.title,
+        amount: updatedBill.amount,
+        account: updatedBill.account,
+        due_day: updatedBill.due_day,
+        is_paid: updatedBill.is_paid,
+        last_paid_at: updatedBill.last_paid_at,
+      }).eq('id', updatedBill.id).then(({ error }) => {
         if (error) console.error('Supabase sync error for update bill:', error);
       });
     }
@@ -379,21 +487,30 @@ export function useJuraganStore() {
     saveBills(updated);
   }, [bills, saveBills]);
 
-  // Reset demo data to initial mock
-  const resetToFactoryDefault = useCallback(() => {
-    const cust = generateMockCustomers();
-    setTenant(DEFAULT_TENANT);
-    setTransactions(INITIAL_TRANSACTIONS);
-    setCustomers(cust);
-    setBills(INITIAL_RECURRING_BILLS);
+  // Reset / Kosongkan semua data (Mulai Baru) secara lokal dan di cloud Supabase
+  const resetToFactoryDefault = useCallback(async () => {
+    setTransactions([]);
+    setCustomers([]);
+    setBills([]);
     setSalaryBudget(5000000);
 
     if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEYS.TENANT, JSON.stringify(DEFAULT_TENANT));
-      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(INITIAL_TRANSACTIONS));
-      localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(cust));
-      localStorage.setItem(STORAGE_KEYS.BILLS, JSON.stringify(INITIAL_RECURRING_BILLS));
+      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
+      localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify([]));
+      localStorage.setItem(STORAGE_KEYS.BILLS, JSON.stringify([]));
       localStorage.setItem(STORAGE_KEYS.SALARY_BUDGET, '5000000');
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await Promise.all([
+          supabase.from('transactions').delete().neq('id', '00000000-0000-0000-0000-000000000000'),
+          supabase.from('customers').delete().neq('id', '00000000-0000-0000-0000-000000000000'),
+          supabase.from('recurring_bills').delete().neq('id', '00000000-0000-0000-0000-000000000000'),
+        ]);
+      } catch (err) {
+        console.error('Failed clearing Supabase cloud data:', err);
+      }
     }
   }, []);
 
@@ -471,7 +588,7 @@ export function useJuraganStore() {
   const addTenant = useCallback((newTenantData: Omit<Tenant, 'id' | 'created_at'>) => {
     const newTenant: Tenant = {
       ...newTenantData,
-      id: `tenant-${Date.now()}`,
+      id: generateUUID(),
       created_at: new Date().toISOString(),
       status: newTenantData.status || 'ACTIVE',
       plan: newTenantData.plan || 'Pro Single-RW',
@@ -492,20 +609,33 @@ export function useJuraganStore() {
     return newTenant;
   }, [tenants]);
 
-  // Action: Update Tenant (Super Admin)
+  // Action: Update Tenant (Super Admin / Settings)
   const updateTenant = useCallback((updatedTenant: Tenant) => {
     const updated = tenants.map(t => t.id === updatedTenant.id ? updatedTenant : t);
     setTenants(updated);
+    if (tenant.id === updatedTenant.id) {
+      setTenant(updatedTenant);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEYS.TENANT, JSON.stringify(updatedTenant));
+      }
+    }
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.TENANTS_LIST, JSON.stringify(updated));
     }
 
     if (isSupabaseConfigured && supabase) {
-      supabase.from('tenants').update(updatedTenant).eq('id', updatedTenant.id).then(({ error }) => {
+      supabase.from('tenants').update({
+        business_name: updatedTenant.business_name,
+        owner_name: updatedTenant.owner_name,
+        phone: updatedTenant.phone,
+        status: updatedTenant.status,
+        plan: updatedTenant.plan,
+        monthly_price: updatedTenant.monthly_price,
+      }).eq('id', updatedTenant.id).then(({ error }) => {
         if (error) console.error('Supabase sync error for update tenant:', error);
       });
     }
-  }, [tenants]);
+  }, [tenant.id, tenants]);
 
   // Action: Delete Tenant (Super Admin)
   const deleteTenant = useCallback((id: string) => {
@@ -513,6 +643,12 @@ export function useJuraganStore() {
     setTenants(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.TENANTS_LIST, JSON.stringify(updated));
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('tenants').delete().eq('id', id).then(({ error }) => {
+        if (error) console.error('Supabase sync error for delete tenant:', error);
+      });
     }
   }, [tenants]);
 

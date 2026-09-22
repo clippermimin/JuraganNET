@@ -8,6 +8,7 @@ interface ConfirmModalProps {
   message: string;
   confirmText?: string;
   cancelText?: string;
+  isLoading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -18,6 +19,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   message,
   confirmText = 'Hapus',
   cancelText = 'Batal',
+  isLoading = false,
   onConfirm,
   onCancel,
 }) => {
@@ -26,7 +28,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   return (
     <div 
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn"
-      onClick={onCancel}
+      onClick={isLoading ? undefined : onCancel}
     >
       <div 
         className="w-full max-w-sm bg-white rounded-[32px] p-6 shadow-2xl animate-slideUp relative"
@@ -47,13 +49,15 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           <div className="w-full flex flex-col gap-3 mt-4 pt-2">
             <button
               onClick={onConfirm}
-              className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-black text-sm shadow-lg shadow-red-600/30 transition active:scale-95"
+              disabled={isLoading}
+              className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-700 active:bg-red-800 disabled:opacity-50 text-white font-black text-sm shadow-lg shadow-red-600/30 transition active:scale-95 cursor-pointer disabled:cursor-not-allowed"
             >
-              {confirmText}
+              {isLoading ? 'Sedang Mengosongkan...' : confirmText}
             </button>
             <button
               onClick={onCancel}
-              className="w-full py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-sm transition active:scale-95"
+              disabled={isLoading}
+              className="w-full py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-sm transition active:scale-95 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             >
               {cancelText}
             </button>
