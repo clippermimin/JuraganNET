@@ -132,26 +132,40 @@ export function parseVoiceInput(speechText: string): { amount?: number; notes?: 
   }
 
   // Category detection
-  if (text.includes('iuran') || text.includes('bulanan') || text.includes('bayar wifi')) {
-    detectedCategory = 'Iuran Bulanan Pelanggan';
-  } else if (text.includes('pasang baru') || text.includes('instalasi')) {
-    detectedCategory = 'Pasang Baru / Registrasi';
-  } else if (text.includes('kabel') || text.includes('dropcore') || text.includes('router') || text.includes('ont')) {
-    detectedCategory = 'Beli Alat/Kabel';
+  if (text.includes('iuran') || text.includes('bulanan') || text.includes('bayar wifi') || text.includes('tagihan')) {
+    detectedCategory = 'Iuran Bulanan Warga';
+  } else if (text.includes('pasang baru') || text.includes('instalasi') || text.includes('psb')) {
+    detectedCategory = 'Pasang Baru (PSB)';
+  } else if (text.includes('voucher') || text.includes('koin') || text.includes('gesek')) {
+    detectedCategory = 'Setoran Voucher WiFi';
+  } else if (text.includes('indomart') || text.includes('indomaret') || text.includes('alfamart') || text.includes('alfa') || text.includes('warung') || text.includes('cemilan')) {
+    detectedCategory = 'Indomaret / Warung';
+  } else if (text.includes('rokok') || text.includes('ngopi') || text.includes('kopi') || text.includes('sampoerna') || text.includes('surya')) {
+    detectedCategory = 'Rokok & Kopi';
+  } else if (text.includes('makan') || text.includes('sarapan') || text.includes('siang') || text.includes('malam') || text.includes('padang') || text.includes('warteg')) {
+    detectedCategory = 'Makan & Minum';
+  } else if (text.includes('dapur') || text.includes('beras') || text.includes('lauk') || text.includes('pasar') || text.includes('minyak') || text.includes('gas')) {
+    detectedCategory = 'Beras & Dapur';
+  } else if (text.includes('anak') || text.includes('istri') || text.includes('sekolah') || text.includes('susu') || text.includes('pampers')) {
+    detectedCategory = 'Uang Jajan Anak';
+  } else if (text.includes('game') || text.includes('topup') || text.includes('pulsa') || text.includes('kuota') || text.includes('ml') || text.includes('ff')) {
+    detectedCategory = 'Pulsa & Game';
+  } else if (text.includes('router') || text.includes('modem') || text.includes('ont') || text.includes('zte') || text.includes('huawei')) {
+    detectedCategory = 'Router & ONT Pelanggan';
+  } else if (text.includes('kabel') || text.includes('dropcore') || text.includes('patchcord') || text.includes('fo') || text.includes('fiber')) {
+    detectedCategory = 'Kabel FO & Dropcore';
+  } else if (text.includes('isp') || text.includes('indihome') || text.includes('biznet') || text.includes('iconnet') || text.includes('bandwidth')) {
+    detectedCategory = 'Bayar ISP / Bandwidth';
+  } else if (text.includes('gaji') || text.includes('upah') || text.includes('teknisi')) {
+    detectedCategory = 'Gaji Tim Lapangan';
   } else if (text.includes('listrik') || text.includes('token') || text.includes('pln')) {
-    detectedCategory = 'Listrik & Operasional';
-  } else if (text.includes('bensin') || text.includes('motor') || text.includes('oli')) {
-    detectedCategory = 'Bensin';
-  } else if (text.includes('nene') || text.includes('keluarga') || text.includes('kampung') || text.includes('ortu')) {
-    detectedCategory = 'Keluarga / Nene';
-  } else if (text.includes('domba') || text.includes('kambing') || text.includes('ternak')) {
-    detectedCategory = 'Beli Domba / Ternak';
-  } else if (text.includes('dapur') || text.includes('beras') || text.includes('lauk') || text.includes('pasar')) {
-    detectedCategory = 'Belanja Dapur';
-  } else if (text.includes('jajan') || text.includes('kopi') || text.includes('rokok') || text.includes('makan')) {
-    detectedCategory = 'Hiburan / Jajan';
-  } else if (text.includes('kas rw') || text.includes('iuran rw')) {
-    detectedCategory = 'Kas RW';
+    detectedCategory = 'Listrik Server & OLT';
+  } else if (text.includes('bensin') || text.includes('motor') || text.includes('oli') || text.includes('tambal')) {
+    detectedCategory = 'Bensin Lapangan';
+  } else if (text.includes('tiang') || text.includes('kas rw') || text.includes('iuran rw') || text.includes('rt') || text.includes('rw')) {
+    detectedCategory = 'Sewa Tiang & Kas RT/RW';
+  } else if (text.includes('cicilan') || text.includes('arisan') || text.includes('koperasi') || text.includes('pinjol')) {
+    detectedCategory = 'Cicilan & Arisan';
   }
 
   return {
