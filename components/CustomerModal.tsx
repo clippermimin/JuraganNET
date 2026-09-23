@@ -129,7 +129,7 @@ export const CustomerModal: React.FC<CustomerModalProps> = ({
 
     if (!finalArea) return;
 
-    const feeNum = Number(monthlyFee) || 150000;
+    const feeNum = parseInt(String(monthlyFee).replace(/[^0-9]/g, ''), 10) || 150000;
 
     if (customer) {
       onSave({
@@ -349,18 +349,29 @@ export const CustomerModal: React.FC<CustomerModalProps> = ({
             </label>
             <div className="relative">
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 required
-                min={0}
-                step={10000}
-                placeholder="150000"
-                value={monthlyFee}
-                onChange={(e) => setMonthlyFee(e.target.value)}
+                placeholder="150.000"
+                value={monthlyFee ? Number(String(monthlyFee).replace(/[^0-9]/g, '')).toLocaleString('id-ID') : ''}
+                onChange={(e) => setMonthlyFee(e.target.value.replace(/[^0-9]/g, ''))}
                 className="w-full pl-10 pr-4 py-3.5 rounded-2xl bg-white border border-gray-200 text-sm font-bold text-gray-900 focus:outline-none focus:border-blue-500 transition-colors"
               />
               <span className="text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 font-extrabold text-sm pointer-events-none">Rp</span>
             </div>
-            <p className="text-[11px] text-gray-500 mt-1.5">Preset umum: 100.000 / 150.000 / 200.000</p>
+            <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+              <span className="text-[11px] text-gray-400 font-medium">Preset Cepat:</span>
+              {[100000, 150000, 200000, 250000].map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => setMonthlyFee(String(preset))}
+                  className="px-2 py-0.5 rounded-lg bg-gray-100 hover:bg-blue-50 hover:text-blue-600 text-gray-600 font-bold text-[11px] transition active:scale-95 cursor-pointer border border-gray-200"
+                >
+                  {preset.toLocaleString('id-ID')}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Nomor WhatsApp */}

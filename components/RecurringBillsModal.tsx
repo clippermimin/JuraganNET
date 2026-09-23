@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Layers, Plus, Pencil, Trash2, Check, Calendar, Building2, User } from 'lucide-react';
+import { X, Layers, Plus, Pencil, Trash2, Check, Calendar, Building2, User, ChevronUp, ChevronDown } from 'lucide-react';
 import { RecurringBill } from '@/lib/types';
 import { formatIDR } from '@/lib/utils';
 import { ConfirmModal } from './ConfirmModal';
@@ -14,15 +14,17 @@ interface RecurringBillsModalProps {
   onAddBill: (bill: Omit<RecurringBill, 'id' | 'tenant_id' | 'is_paid'>) => void;
   onUpdateBill: (bill: RecurringBill) => void;
   onDeleteBill: (id: string) => void;
+  onReorderBills?: (bills: RecurringBill[]) => void;
 }
 
 export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
-  isOpen,
   bills,
+  isOpen,
   onClose,
   onAddBill,
   onUpdateBill,
   onDeleteBill,
+  onReorderBills,
 }) => {
   const [editingBill, setEditingBill] = useState<RecurringBill | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -30,9 +32,10 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
 
   // Form State
   const [title, setTitle] = useState('');
-  const [amount, setAmount] = useState<number | string>(500000);
+  const [amountStr, setAmountStr] = useState<string>('500000');
   const [dueDay, setDueDay] = useState<number | string>(5);
   const [account, setAccount] = useState<'BUSINESS' | 'PERSONAL'>('BUSINESS');
+  const [isPaid, setIsPaid] = useState<boolean>(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -44,18 +47,20 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
   const handleOpenAddForm = () => {
     setEditingBill(null);
     setTitle('');
-    setAmount(500000);
+    setAmountStr('');
     setDueDay(5);
     setAccount('BUSINESS');
+    setIsPaid(false);
     setIsFormOpen(true);
   };
 
   const handleOpenEditForm = (bill: RecurringBill) => {
     setEditingBill(bill);
     setTitle(bill.title);
-    setAmount(bill.amount);
+    setAmountStr(String(bill.amount));
     setDueDay(bill.due_day);
     setAccount(bill.account);
+    setIsPaid(bill.is_paid);
     setIsFormOpen(true);
   };
 
@@ -63,7 +68,7 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
     e.preventDefault();
     if (!title.trim()) return;
 
-    const amtNum = Number(amount) || 0;
+    const amtNum = parseInt(amountStr.replace(/[^0-9]/g, ''), 10) || 0;
     const dayNum = Math.min(31, Math.max(1, Number(dueDay) || 1));
 
     if (editingBill) {
@@ -73,6 +78,7 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
         amount: amtNum,
         due_day: dayNum,
         account,
+        is_paid: isPaid,
       });
     } else {
       onAddBill({
@@ -95,6 +101,18 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
       onDeleteBill(billToDelete.id);
     }
     setBillToDelete(null);
+  };
+
+  const handleMove = (index: number, direction: number) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= bills.length) return;
+    const newBills = [...bills];
+    const temp = newBills[index];
+    newBills[index] = newBills[targetIndex];
+    newBills[targetIndex] = temp;
+    if (onReorderBills) {
+      onReorderBills(newBills);
+    }
   };
 
   if (!isOpen || !mounted) return null;
@@ -179,13 +197,12 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
                 </label>
                 <div className="relative">
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     required
-                    min={0}
-                    step={10000}
-                    placeholder="4500000"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="Contoh: 1.235.000"
+                    value={amountStr ? Number(amountStr.replace(/[^0-9]/g, '')).toLocaleString('id-ID') : ''}
+                    onChange={(e) => setAmountStr(e.target.value.replace(/[^0-9]/g, ''))}
                     className="w-full pl-10 pr-4 py-3.5 rounded-2xl bg-white border border-gray-200 text-sm font-bold text-gray-900 focus:outline-none focus:border-blue-500 transition-colors"
                   />
                   <span className="text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 font-extrabold text-sm pointer-events-none">Rp</span>
@@ -245,6 +262,40 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
               </div>
             </div>
 
+            {/* Status Pembayaran (Khusus Saat Edit) */}
+            {editingBill && (
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                  Status Pembayaran Bulan Ini
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsPaid(true)}
+                    className={`py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition ${
+                      isPaid
+                        ? 'bg-green-600 text-white border-green-600 shadow-sm'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Lunas</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsPaid(false)}
+                    className={`py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition ${
+                      !isPaid
+                        ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span>Belum Lunas</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             <button
               type="submit"
               className="w-full py-4 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-sm shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer mt-2"
@@ -262,13 +313,20 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
               <p className="text-xs text-gray-400 font-medium">Belum ada tagihan rutin yang didaftarkan.</p>
             </div>
           ) : (
-            bills.map((bill) => (
+            bills.map((bill, index) => (
               <div
                 key={bill.id}
-                className="p-3 rounded-2xl border border-gray-200 bg-white hover:border-gray-300 transition flex items-center justify-between gap-3 shadow-sm"
+                className="p-3 rounded-2xl border border-gray-200 bg-white hover:border-gray-300 transition flex items-center justify-between gap-2 shadow-sm"
               >
+                {/* Index Number */}
+                <div className="flex-shrink-0 w-6 text-center">
+                  <span className="text-[10px] font-black text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-md">
+                    #{index + 1}
+                  </span>
+                </div>
+
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <h4 className="text-xs font-bold text-gray-900 truncate">
                       {bill.title}
                     </h4>
@@ -276,6 +334,11 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
                       bill.account === 'BUSINESS' ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700'
                     }`}>
                       {bill.account === 'BUSINESS' ? 'Bisnis' : 'Pribadi'}
+                    </span>
+                    <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-md ${
+                      bill.is_paid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                      {bill.is_paid ? 'Lunas' : 'Belum Lunas'}
                     </span>
                   </div>
 
@@ -289,18 +352,40 @@ export const RecurringBillsModal: React.FC<RecurringBillsModalProps> = ({
                   </div>
                 </div>
 
-                {/* Edit & Delete Buttons */}
-                <div className="flex items-center gap-1">
+                {/* Reorder Up/Down, Edit & Delete Buttons */}
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {onReorderBills && (
+                    <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl p-0.5 mr-0.5">
+                      <button
+                        type="button"
+                        disabled={index === 0}
+                        onClick={() => handleMove(index, -1)}
+                        className="p-1 rounded-lg text-gray-500 hover:text-blue-600 disabled:opacity-20 hover:bg-white transition cursor-pointer disabled:cursor-not-allowed"
+                        title="Geser Naik (Posisi Lebih Awal)"
+                      >
+                        <ChevronUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={index === bills.length - 1}
+                        onClick={() => handleMove(index, 1)}
+                        className="p-1 rounded-lg text-gray-500 hover:text-blue-600 disabled:opacity-20 hover:bg-white transition cursor-pointer disabled:cursor-not-allowed"
+                        title="Geser Turun"
+                      >
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
                   <button
                     onClick={() => handleOpenEditForm(bill)}
-                    className="p-2 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition"
+                    className="p-2 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer"
                     title="Edit Tagihan"
                   >
                     <Pencil className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteClick(bill.id, bill.title)}
-                    className="p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 transition"
+                    className="p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer"
                     title="Hapus Tagihan"
                   >
                     <Trash2 className="w-4 h-4" />

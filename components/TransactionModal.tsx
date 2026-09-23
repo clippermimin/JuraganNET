@@ -36,39 +36,42 @@ interface TransactionModalProps {
 const CATEGORIES_MAP = {
   IN: {
     BUSINESS: [
-      'Iuran Bulanan Internet',
-      'Pemasangan Baru (PSB)',
-      'Jual Voucher Hotspot',
-      'Jual Router / Alat',
-      'Jasa Servis / Tarik Kabel',
+      'Iuran Bulanan',
+      'Pasang Baru (PSB)',
+      'Voucher WiFi',
+      'Jual Alat / Router',
+      'Servis / Tarik Kabel',
       'Pemasukan Lainnya',
     ],
     PERSONAL: [
       'Gaji dari Bisnis',
-      'Bonus / Bagi Hasil',
-      'Bisnis Sampingan',
+      'Bagi Hasil / Bonus',
+      'Usaha Sampingan',
       'Pemberian / Titipan',
     ],
   },
   OUT: {
     BUSINESS: [
-      'Bayar ISP / Bandwidth',
-      'Beli Alat (Kabel/Router/HTB)',
-      'Gaji & Ongkos Teknisi',
-      'Bensin & Operasional Lapangan',
-      'Sewa Tiang / Uang Kas RT',
-      'Konsumsi / Kopi / Rokok Teknisi',
+      'Kabel & Alat',
+      'Alat Listrik',
+      'Gaji Pegawai',
+      'Bayar ISP',
+      'Kas RW & Lingkungan',
+      'Sewa & Kontrakan',
+      'Bensin & Lapangan',
       'Listrik Server',
+      'Konsumsi / Kopi',
+      'Lain-lain',
     ],
     PERSONAL: [
-      'Belanja Dapur / Istri',
-      'Zakat / Sedekah',
-      'Keluarga / Orang Tua',
-      'Investasi Domba / Ternak',
-      'Cicilan / Hutang',
-      'Jajan / Nongkrong / Kopi',
-      'Bensin & Servis Motor',
-      'Listrik & Kebutuhan Rumah',
+      'Dapur & Makan',
+      'Keluarga & Anak',
+      'Cicilan & Koperasi',
+      'Zakat & Sedekah',
+      'Jajan & Kopi',
+      'Bensin & Motor',
+      'Listrik Rumah',
+      'Lain-lain',
     ],
   },
 };
@@ -336,27 +339,45 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             </div>
           </div>
 
-          {/* 3. Category Chips */}
+          {/* 3. Category Chips & Custom Category */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1.5">
-              Kategori Cepat:
-            </label>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-bold text-gray-700">
+                Kategori Transaksi:
+              </label>
+              {category && (
+                <span className="text-[11px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                  Dipilih: {category}
+                </span>
+              )}
+            </div>
+
+            {/* Quick Chips */}
+            <div className="flex flex-wrap gap-1.5 mb-2">
               {currentCategories.map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setCategory(cat)}
-                  className={`min-h-[42px] px-3 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 border ${
+                  className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 border cursor-pointer ${
                     category === cat
                       ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   {cat}
                 </button>
               ))}
             </div>
+
+            {/* Optional Custom Category Field */}
+            <input
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Atau ketik nama kategori sendiri..."
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-200 text-xs font-bold text-gray-900 focus:outline-none focus:border-blue-500 transition-colors"
+            />
           </div>
 
           {/* 4. Notes & Web Speech Voice Recognition */}

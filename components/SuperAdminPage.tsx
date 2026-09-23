@@ -99,7 +99,7 @@ export const SuperAdminPage: React.FC<SuperAdminPageProps> = ({
         phone: phone.trim(),
         status,
         plan,
-        monthly_price: Number(monthlyPrice) || 0,
+        monthly_price: parseInt(String(monthlyPrice).replace(/[^0-9]/g, ''), 10) || 0,
       });
     } else {
       onAddTenant({
@@ -108,7 +108,7 @@ export const SuperAdminPage: React.FC<SuperAdminPageProps> = ({
         phone: phone.trim(),
         status,
         plan,
-        monthly_price: Number(monthlyPrice) || 0,
+        monthly_price: parseInt(String(monthlyPrice).replace(/[^0-9]/g, ''), 10) || 0,
       });
     }
     resetForm();
@@ -290,11 +290,10 @@ export const SuperAdminPage: React.FC<SuperAdminPageProps> = ({
                       Biaya Berlangganan / Bulan
                     </label>
                     <input
-                      type="number"
-                      min={0}
-                      step={10000}
-                      value={monthlyPrice}
-                      onChange={(e) => setMonthlyPrice(e.target.value)}
+                      type="text"
+                      inputMode="numeric"
+                      value={monthlyPrice ? Number(String(monthlyPrice).replace(/[^0-9]/g, '')).toLocaleString('id-ID') : ''}
+                      onChange={(e) => setMonthlyPrice(e.target.value.replace(/[^0-9]/g, ''))}
                       className="w-full px-4 py-3.5 rounded-2xl bg-white border border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500 transition-colors"
                     />
                   </div>

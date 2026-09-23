@@ -12,11 +12,13 @@ import {
   Flame,
   ShoppingBag,
   Sparkles,
-  MoreVertical
+  MoreVertical,
+  ArrowRight
 } from 'lucide-react';
 import { PersonalSummary, Transaction } from '@/lib/types';
 import { formatIDR, formatDateIndo } from '@/lib/utils';
 import { ConfirmModal } from './ConfirmModal';
+import { TransactionHistoryModal } from './TransactionHistoryModal';
 
 interface PersonalTabProps {
   summary: PersonalSummary;
@@ -37,6 +39,7 @@ export const PersonalTab: React.FC<PersonalTabProps> = ({
   const [tempSalary, setTempSalary] = useState(String(summary.salaryBudget));
   const [txToDelete, setTxToDelete] = useState<{id: string, name: string} | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   const handleSaveSalary = () => {
     const val = parseInt(tempSalary.replace(/[^0-9]/g, ''), 10);
@@ -282,7 +285,17 @@ export const PersonalTab: React.FC<PersonalTabProps> = ({
               Catatan Pengeluaran Pribadi
             </h3>
           </div>
-          <span className="text-xs text-gray-500">Terbaru</span>
+          {recentTransactions.filter(t => t.account === 'PERSONAL').length > 0 && (
+            <button
+              onClick={() => setIsHistoryModalOpen(true)}
+              className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-lg transition active:scale-95 flex items-center gap-1 cursor-pointer"
+            >
+              <span>Lihat Semua</span>
+              <span className="text-[10px] opacity-75">
+                ({recentTransactions.filter(t => t.account === 'PERSONAL').length})
+              </span>
+            </button>
+          )}
         </div>
 
         {recentTransactions.filter(t => t.account === 'PERSONAL').length === 0 ? (
@@ -290,80 +303,102 @@ export const PersonalTab: React.FC<PersonalTabProps> = ({
             Belum ada catatan pengeluaran pribadi.
           </p>
         ) : (
-          <div className="divide-y divide-gray-100">
-            {recentTransactions
-              .filter(t => t.account === 'PERSONAL')
-              .slice(0, 6)
-              .map((tx) => (
-                <div key={tx.id} className="py-2.5 flex items-center justify-between gap-2">
-                  <div className="flex items-start gap-2.5 min-w-0">
-                    <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 bg-red-50 text-red-500 border border-red-100">
-                      <TrendingDown className="w-4 h-4" />
+          <>
+            <div className="divide-y divide-gray-100">
+              {recentTransactions
+                .filter(t => t.account === 'PERSONAL')
+                .slice(0, 6)
+                .map((tx) => (
+                  <div key={tx.id} className="py-2.5 flex items-center justify-between gap-2">
+                    <div className="flex items-start gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 bg-red-50 text-red-500 border border-red-100">
+                        <TrendingDown className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-gray-900 truncate">
+                          {tx.category}
+                        </p>
+                        <p className="text-[11px] text-gray-500 truncate">
+                          {tx.notes || 'Pengeluaran pribadi'}
+                        </p>
+                        <span className="text-[10px] text-gray-400">
+                          {formatDateIndo(tx.created_at)}
+                        </span>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-gray-900 truncate">
-                        {tx.category}
-                      </p>
-                      <p className="text-[11px] text-gray-500 truncate">
-                        {tx.notes || 'Pengeluaran pribadi'}
-                      </p>
-                      <span className="text-[10px] text-gray-400">
-                        {formatDateIndo(tx.created_at)}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="text-right flex-shrink-0 relative">
-                    <div className="flex items-center gap-2">
-                      <p className="text-xs font-black text-red-500">
-                        -{formatIDR(tx.amount)}
-                      </p>
-                      
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setOpenDropdownId(openDropdownId === tx.id ? null : tx.id);
-                        }}
-                        className="p-1 rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition"
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
-
-                      {/* Dropdown Menu */}
-                      {openDropdownId === tx.id && (
-                        <div 
-                          className="absolute right-0 top-6 w-32 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-30 animate-fadeIn"
-                          onClick={(e) => e.stopPropagation()}
+                    <div className="text-right flex-shrink-0 relative">
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs font-black text-red-500">
+                          -{formatIDR(tx.amount)}
+                        </p>
+                        
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenDropdownId(openDropdownId === tx.id ? null : tx.id);
+                          }}
+                          className="p-1 rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition"
                         >
-                          <div className="p-1">
-                            <button
-                              onClick={() => {
-                                setOpenDropdownId(null);
-                                if (onEditTransaction) onEditTransaction(tx);
-                              }}
-                              className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-bold text-gray-700 hover:bg-gray-100 rounded-lg transition"
-                            >
-                              Edit Data
-                            </button>
-                            <button
-                              onClick={() => {
-                                setOpenDropdownId(null);
-                                setTxToDelete({ id: tx.id, name: tx.category });
-                              }}
-                              className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-bold text-red-600 hover:bg-red-50 rounded-lg transition mt-0.5"
-                            >
-                              Hapus
-                            </button>
+                          <MoreVertical className="w-4 h-4" />
+                        </button>
+
+                        {/* Dropdown Menu */}
+                        {openDropdownId === tx.id && (
+                          <div 
+                            className="absolute right-0 top-6 w-32 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-30 animate-fadeIn"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="p-1">
+                              <button
+                                onClick={() => {
+                                  setOpenDropdownId(null);
+                                  if (onEditTransaction) onEditTransaction(tx);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-bold text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                              >
+                                Edit Data
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setOpenDropdownId(null);
+                                  setTxToDelete({ id: tx.id, name: tx.category });
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-bold text-red-600 hover:bg-red-50 rounded-lg transition mt-0.5"
+                              >
+                                Hapus
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-          </div>
+                ))}
+            </div>
+
+            {recentTransactions.filter(t => t.account === 'PERSONAL').length > 6 && (
+              <button
+                onClick={() => setIsHistoryModalOpen(true)}
+                className="w-full mt-3 py-2 px-3 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 rounded-xl text-xs font-bold text-gray-700 hover:text-blue-600 flex items-center justify-center gap-1.5 transition active:scale-[0.98] cursor-pointer"
+              >
+                <span>Lihat Seluruh Mutasi ({recentTransactions.filter(t => t.account === 'PERSONAL').length} Transaksi)</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </>
         )}
       </div>
+
+      <TransactionHistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={() => setIsHistoryModalOpen(false)}
+        title="Catatan Pengeluaran Pribadi"
+        account="PERSONAL"
+        transactions={recentTransactions}
+        onEditTransaction={onEditTransaction}
+        onDeleteTransaction={onDeleteTransaction}
+      />
 
       <ConfirmModal
         isOpen={!!txToDelete}

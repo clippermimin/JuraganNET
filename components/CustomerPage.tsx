@@ -18,7 +18,8 @@ import {
   Pencil,
   Trash2,
   MoreVertical,
-  History
+  History,
+  RotateCcw,
 } from 'lucide-react';
 import { Customer, Tenant, Transaction } from '@/lib/types';
 import { formatIDR, formatDateIndo, getWhatsAppReceiptUrl, getWhatsAppReminderUrl } from '@/lib/utils';
@@ -31,6 +32,7 @@ interface CustomerPageProps {
   tenant: Tenant;
   transactions?: Transaction[];
   onReceivePayment: (customer: Customer) => void;
+  onUnpayPayment?: (customer: Customer) => void;
   onBackToDashboard: () => void;
   onAddCustomer?: (customer: Omit<Customer, 'id' | 'tenant_id' | 'is_paid'>) => void;
   onUpdateCustomer?: (customer: Customer) => void;
@@ -42,6 +44,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
   tenant,
   transactions = [],
   onReceivePayment,
+  onUnpayPayment,
   onBackToDashboard,
   onAddCustomer,
   onUpdateCustomer,
@@ -368,6 +371,18 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                         <Pencil className="w-3.5 h-3.5 text-blue-500" />
                         <span>Edit Data</span>
                       </button>
+                      {customer.is_paid && onUnpayPayment && (
+                        <button
+                          onClick={() => {
+                            setActiveMenuCustId(null);
+                            onUnpayPayment(customer);
+                          }}
+                          className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-orange-600 hover:bg-orange-50 flex items-center gap-2 transition"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5 text-orange-500" />
+                          <span>Batalkan Lunas</span>
+                        </button>
+                      )}
                       <button
                         onClick={() => {
                           setActiveMenuCustId(null);

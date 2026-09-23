@@ -418,6 +418,83 @@ export function useJuraganStore() {
     return newTx;
   }, [bills, saveBills, tenant.id, transactions, saveTransactions]);
 
+  // Action: Batalkan Status Lunas Tagihan Rutin (Revert Payment)
+  const unpayRecurringBill = useCallback((bill: RecurringBill) => {
+    if (!bill.is_paid) return;
+
+    // 1. Mark bill unpaid
+    const updatedBills = bills.map(b => 
+      b.id === bill.id 
+        ? { ...b, is_paid: false, last_paid_at: undefined } 
+        : b
+    );
+    saveBills(updatedBills);
+
+    // 2. Remove matching OUT transaction
+    const txIndex = transactions.findIndex(t => 
+      t.type === 'OUT' && 
+      (t.notes === `Bayar Tagihan: ${bill.title}` || t.notes?.includes(bill.title)) &&
+      Number(t.amount) === Number(bill.amount)
+    );
+
+    let removedTxId: string | null = null;
+    if (txIndex !== -1) {
+      removedTxId = transactions[txIndex].id;
+      const updatedTx = transactions.filter((_, idx) => idx !== txIndex);
+      saveTransactions(updatedTx);
+    }
+
+    // Sync to Supabase
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('recurring_bills').update({ is_paid: false, last_paid_at: null }).eq('id', bill.id).then(({ error }) => {
+        if (error) console.error('Supabase error unpaying recurring bill:', error);
+      });
+      if (removedTxId) {
+        supabase.from('transactions').delete().eq('id', removedTxId).then(({ error }) => {
+          if (error) console.error('Supabase error deleting reversed bill transaction:', error);
+        });
+      }
+    }
+  }, [bills, saveBills, transactions, saveTransactions]);
+
+  // Action: Batalkan Status Lunas Pelanggan (Revert Customer Payment)
+  const unpayCustomerPayment = useCallback((customer: Customer) => {
+    if (!customer.is_paid) return;
+
+    // 1. Mark customer unpaid
+    const updatedCustomers = customers.map(c => 
+      c.id === customer.id 
+        ? { ...c, is_paid: false, updated_at: new Date().toISOString() } 
+        : c
+    );
+    saveCustomers(updatedCustomers);
+
+    // 2. Remove matching IN transaction
+    const txIndex = transactions.findIndex(t => 
+      t.type === 'IN' && 
+      (t.customer_id === customer.id || t.notes?.includes(customer.name))
+    );
+
+    let removedTxId: string | null = null;
+    if (txIndex !== -1) {
+      removedTxId = transactions[txIndex].id;
+      const updatedTx = transactions.filter((_, idx) => idx !== txIndex);
+      saveTransactions(updatedTx);
+    }
+
+    // Sync to Supabase
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('customers').update({ is_paid: false, updated_at: new Date().toISOString() }).eq('id', customer.id).then(({ error }) => {
+        if (error) console.error('Supabase error unpaying customer:', error);
+      });
+      if (removedTxId) {
+        supabase.from('transactions').delete().eq('id', removedTxId).then(({ error }) => {
+          if (error) console.error('Supabase error deleting reversed customer transaction:', error);
+        });
+      }
+    }
+  }, [customers, saveCustomers, transactions, saveTransactions]);
+
   // Action: Add Customer
   const addCustomer = useCallback((customerData: Omit<Customer, 'id' | 'tenant_id' | 'is_paid'>) => {
     const newCustomer: Customer = {
@@ -536,6 +613,11 @@ export function useJuraganStore() {
       });
     }
   }, [bills, saveBills]);
+
+  // Action: Reorder Recurring Bills (Atur Urutan Posisi Tagihan Bebas)
+  const reorderBills = useCallback((newBills: RecurringBill[]) => {
+    saveBills(newBills);
+  }, [saveBills]);
 
   // Reset all bills & customer statuses for new month (Manual Action)
   const resetBillsForNewMonth = useCallback(() => {
@@ -795,13 +877,16 @@ export function useJuraganStore() {
     updateTransaction,
     deleteTransaction,
     receiveCustomerPayment,
+    unpayCustomerPayment,
     payRecurringBill,
+    unpayRecurringBill,
     addCustomer,
     updateCustomer,
     deleteCustomer,
     addRecurringBill,
     updateRecurringBill,
     deleteRecurringBill,
+    reorderBills,
     resetBillsForNewMonth,
     resetToFactoryDefault,
   };

@@ -24,7 +24,17 @@ const mockCustomers = [
 async function seed() {
   console.log('Seeding data to Supabase...');
 
-  // 2. Customers
+  // 1. Recurring Bills
+  const { error: billsError } = await supabase.from('recurring_bills').upsert(INITIAL_RECURRING_BILLS, { onConflict: 'id' });
+  if (billsError) console.error('Error seeding bills:', billsError);
+  else console.log(`Seeded ${INITIAL_RECURRING_BILLS.length} recurring bills`);
+
+  // 2. Transactions
+  const { error: txError } = await supabase.from('transactions').upsert(INITIAL_TRANSACTIONS, { onConflict: 'id' });
+  if (txError) console.error('Error seeding transactions:', txError);
+  else console.log(`Seeded ${INITIAL_TRANSACTIONS.length} transactions`);
+
+  // 3. Customers
   const { error: customersError } = await supabase.from('customers').upsert(mockCustomers, { onConflict: 'id' });
   if (customersError) console.error('Error seeding customers:', customersError);
   else console.log(`Seeded ${mockCustomers.length} customers`);
@@ -33,3 +43,4 @@ async function seed() {
 }
 
 seed();
+

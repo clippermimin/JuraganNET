@@ -44,13 +44,16 @@ export default function HomeApp() {
     updateTransaction,
     deleteTransaction,
     receiveCustomerPayment,
+    unpayCustomerPayment,
     payRecurringBill,
+    unpayRecurringBill,
     addCustomer,
     updateCustomer,
     deleteCustomer,
     addRecurringBill,
     updateRecurringBill,
     deleteRecurringBill,
+    reorderBills,
   } = useJuraganStore();
 
   // Navigation State
@@ -230,11 +233,13 @@ export default function HomeApp() {
                   bills={bills}
                   recentTransactions={transactions}
                   onPayBill={payRecurringBill}
+                  onUnpayBill={unpayRecurringBill}
                   onOpenCustomerList={() => setActiveNavTab('CUSTOMERS')}
                   onQuickRecord={(type, account) => handleOpenTransaction(type, account)}
                   onAddBill={addRecurringBill}
                   onUpdateBill={updateRecurringBill}
                   onDeleteBill={deleteRecurringBill}
+                  onReorderBills={reorderBills}
                   onEditTransaction={(tx) => handleOpenTransaction(tx.type, tx.account, tx)}
                   onDeleteTransaction={handleConfirmDeleteTx}
                 />
@@ -258,6 +263,7 @@ export default function HomeApp() {
                 tenant={tenant}
                 transactions={transactions}
                 onReceivePayment={receiveCustomerPayment}
+                onUnpayPayment={unpayCustomerPayment}
                 onBackToDashboard={() => setActiveNavTab('DASHBOARD')}
                 onAddCustomer={addCustomer}
                 onUpdateCustomer={updateCustomer}
