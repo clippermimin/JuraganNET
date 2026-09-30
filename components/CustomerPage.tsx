@@ -342,44 +342,51 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                   customer.is_paid
                     ? 'bg-emerald-50/30 border-emerald-100 hover:border-emerald-200'
                     : 'bg-white border-gray-200/80 shadow-2xs hover:border-blue-200'
-                } ${isCompactView ? 'p-2 sm:p-2.5' : 'p-3.5'}`}
+                } ${isCompactView ? 'p-2.5 sm:p-3' : 'p-3.5'}`}
               >
                 {/* Main Row */}
-                <div className="flex items-center justify-between gap-2">
-                  {/* Left: Avatar + Details */}
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2.5">
+                  {/* Left Column: Clickable Name & Details */}
+                  <div 
+                    onClick={() => setExpandedCardCustId(isExpanded ? null : customer.id)}
+                    className="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer select-none active:opacity-75 transition-opacity group"
+                    role="button"
+                    tabIndex={0}
+                    title="Klik untuk buka detail & riwayat"
+                  >
                     {/* Compact Avatar Initial */}
-                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-xs ${
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-xs shadow-2xs transition-colors ${
                       customer.is_paid
                         ? 'bg-emerald-100 text-emerald-700'
-                        : 'bg-blue-50 text-blue-600 border border-blue-200/60'
+                        : 'bg-blue-50 text-blue-700 border border-blue-200/60 group-hover:bg-blue-100'
                     }`}>
                       {customer.name.slice(0, 1).toUpperCase()}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      {/* Name & Nominal */}
-                      <div className="flex items-baseline gap-1.5">
-                        <h4 className="font-bold text-xs sm:text-sm text-gray-900 truncate leading-snug">
+                      {/* Line 1: Full Customer Name (Untruncated) */}
+                      <div className="flex items-center gap-1.5">
+                        <h4 className="font-bold text-xs sm:text-sm text-gray-900 leading-snug group-hover:text-blue-600 transition-colors">
                           {customer.name}
                         </h4>
-                        <span className="text-[10px] text-gray-300">•</span>
-                        <span className={`text-xs font-extrabold ${customer.is_paid ? 'text-emerald-600' : 'text-blue-600'}`}>
-                          {formatIDR(customer.monthly_fee)}
-                        </span>
+                        <ChevronDown className={`w-3 h-3 text-gray-400 transition-transform duration-200 flex-shrink-0 ${isExpanded ? 'rotate-180 text-blue-600' : ''}`} />
                       </div>
 
-                      {/* Area & Phone */}
-                      <div className="flex items-center gap-1.5 mt-0.5 text-[10px] sm:text-[11px] text-gray-500 truncate">
-                        <span className="inline-flex items-center gap-0.5 text-gray-600 truncate max-w-[120px] sm:max-w-none">
+                      {/* Line 2: Nominal Tagihan • Area • HP */}
+                      <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-gray-500">
+                        <span className={`font-extrabold ${customer.is_paid ? 'text-emerald-600' : 'text-blue-600'}`}>
+                          {formatIDR(customer.monthly_fee)}
+                        </span>
+                        <span className="text-gray-300">•</span>
+                        <span className="inline-flex items-center gap-0.5 text-gray-600 font-medium truncate">
                           <MapPin className="w-2.5 h-2.5 text-blue-500 flex-shrink-0" />
                           <span className="truncate">{customer.area}</span>
                         </span>
                         {customer.phone && (
                           <>
-                            <span className="text-gray-300">•</span>
-                            <span className="font-mono text-[10px] text-gray-500 flex items-center gap-0.5 truncate">
-                              <Phone className="w-2.5 h-2.5 text-gray-400 flex-shrink-0" />
+                            <span className="text-gray-300 hidden xs:inline">•</span>
+                            <span className="font-mono text-[10px] text-gray-400 items-center gap-0.5 hidden xs:inline-flex flex-shrink-0">
+                              <Phone className="w-2.5 h-2.5 flex-shrink-0" />
                               <span>{customer.phone}</span>
                             </span>
                           </>
@@ -389,7 +396,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                   </div>
 
                   {/* Right Actions Cluster */}
-                  <div className="flex items-center gap-1 flex-shrink-0">
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
                     {customer.is_paid ? (
                       <>
                         <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200/80">
@@ -417,7 +424,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                             href={getWhatsAppReminderUrl(customer, tenant)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="min-h-[28px] w-7 h-7 sm:w-auto sm:px-2 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 active:bg-orange-200 text-orange-600 border border-orange-200 text-[11px] font-bold flex items-center justify-center gap-1 transition active:scale-95"
+                            className="min-h-[30px] w-7 h-7 sm:w-auto sm:px-2 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 active:bg-orange-200 text-orange-600 border border-orange-200 text-[11px] font-bold flex items-center justify-center gap-1 transition active:scale-95"
                             title="Kirim Tagihan WhatsApp"
                           >
                             <Send className="w-3 h-3" />
@@ -426,9 +433,12 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                         )}
 
                         <button
-                          onClick={() => handleTerimaCash(customer)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTerimaCash(customer);
+                          }}
                           type="button"
-                          className="min-h-[28px] px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs shadow-2xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
+                          className="min-h-[30px] px-2.5 sm:px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs shadow-2xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
                         >
                           <Check className="w-3 h-3 stroke-[3]" />
                           <span>Bayar</span>
@@ -436,20 +446,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                       </>
                     )}
 
-                    {/* Accordion Toggle */}
-                    <button
-                      type="button"
-                      onClick={() => setExpandedCardCustId(isExpanded ? null : customer.id)}
-                      className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition"
-                      title={isExpanded ? "Sembunyikan Detail" : "Lihat Detail"}
-                    >
-                      {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                    </button>
-
                     {/* More Menu */}
                     <div className="relative">
                       <button
-                        onClick={() => setActiveMenuCustId(activeMenuCustId === customer.id ? null : customer.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenuCustId(activeMenuCustId === customer.id ? null : customer.id);
+                        }}
                         className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition active:scale-95 cursor-pointer"
                         title="Menu Opsi"
                       >
@@ -497,15 +500,36 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                   </div>
                 </div>
 
-                {/* Collapsible Detail Panel */}
+                {/* Collapsible Detail Panel (Opens on click) */}
                 {isExpanded && (
-                  <div className="mt-2 pt-2 border-t border-gray-100 text-xs space-y-1.5 animate-fadeIn">
-                    {customer.notes && (
-                      <div className="p-2 bg-gray-50 rounded-lg text-[11px] text-gray-600">
-                        <span className="font-semibold text-gray-700">Catatan / Alamat: </span>
-                        {customer.notes}
+                  <div className="mt-2.5 pt-2.5 border-t border-gray-100 text-xs space-y-2 animate-fadeIn">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                      {/* Alamat / Catatan */}
+                      <div className="p-2 bg-gray-50 rounded-lg text-[11px]">
+                        <span className="font-semibold block text-[10px] uppercase tracking-wider text-gray-400">Alamat & Catatan</span>
+                        <span className="text-gray-800 font-medium">
+                          {customer.notes ? customer.notes : `${customer.area} (Belum ada catatan detail)`}
+                        </span>
                       </div>
-                    )}
+
+                      {/* Kontak WhatsApp */}
+                      <div className="p-2 bg-gray-50 rounded-lg text-[11px] flex items-center justify-between">
+                        <div>
+                          <span className="font-semibold block text-[10px] uppercase tracking-wider text-gray-400">Kontak WhatsApp</span>
+                          <span className="font-mono text-gray-800 font-bold">{customer.phone || 'Belum ada nomor HP'}</span>
+                        </div>
+                        {customer.phone && (
+                          <a
+                            href={`https://wa.me/${customer.phone.replace(/[^0-9]/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2 py-1 rounded-md bg-emerald-100 text-emerald-700 text-[10px] font-bold hover:bg-emerald-200 transition"
+                          >
+                            Chat WA
+                          </a>
+                        )}
+                      </div>
+                    </div>
 
                     {/* Riwayat Pembayaran */}
                     <div className="pt-1">
@@ -516,11 +540,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                       </div>
 
                       {getCustomerPaymentHistory(customer.id, customer.name).length === 0 ? (
-                        <p className="text-[10px] text-gray-400 italic py-0.5">
+                        <p className="text-[10px] text-gray-400 italic py-1 bg-gray-50 rounded-lg text-center">
                           Belum ada riwayat transaksi pembayaran tercatat
                         </p>
                       ) : (
-                        <div className="divide-y divide-gray-100 bg-gray-50/80 rounded-lg p-1.5">
+                        <div className="divide-y divide-gray-100 bg-gray-50/90 rounded-lg p-1.5">
                           {getCustomerPaymentHistory(customer.id, customer.name).map((tx) => (
                             <div key={tx.id} className="py-1 flex items-center justify-between text-[10px]">
                               <div>
@@ -536,6 +560,20 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                           ))}
                         </div>
                       )}
+                    </div>
+
+                    {/* Quick Edit inside card */}
+                    <div className="flex items-center justify-end gap-2 pt-1 border-t border-dashed border-gray-200/80">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenEditModal(customer);
+                        }}
+                        className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 py-1 px-2 rounded-lg hover:bg-blue-50 transition cursor-pointer"
+                      >
+                        <Pencil className="w-3 h-3" />
+                        <span>Edit Data Pelanggan</span>
+                      </button>
                     </div>
                   </div>
                 )}
