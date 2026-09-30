@@ -20,6 +20,10 @@ import {
   MoreVertical,
   History,
   RotateCcw,
+  ChevronDown,
+  ChevronUp,
+  LayoutList,
+  LayoutGrid,
 } from 'lucide-react';
 import { Customer, Tenant, Transaction } from '@/lib/types';
 import { formatIDR, formatDateIndo, getWhatsAppReceiptUrl, getWhatsAppReminderUrl } from '@/lib/utils';
@@ -64,6 +68,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
   const [expandedHistoryCustId, setExpandedHistoryCustId] = useState<string | null>(null);
   const [isQuickBillingOpen, setIsQuickBillingOpen] = useState(false);
   const [remindedCustIds, setRemindedCustIds] = useState<Record<string, boolean>>({});
+  const [isCompactView, setIsCompactView] = useState(true);
+  const [expandedCardCustId, setExpandedCardCustId] = useState<string | null>(null);
 
   const unpaidCustomers = useMemo(() => {
     return customers.filter(c => !c.is_paid);
@@ -159,45 +165,45 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
   };
 
   return (
-    <div className="space-y-4 pb-28">
-      {/* Header Info */}
-      <div className="bg-white border border-gray-200 rounded-3xl p-4 shadow-sm">
-        <div className="flex items-center justify-between gap-2 mb-3">
+    <div className="space-y-2.5 pb-24">
+      {/* Header Info - Compact & Modern */}
+      <div className="bg-white border border-gray-200/80 rounded-2xl p-3 shadow-2xs">
+        <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-              <Users className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-blue-100/80 text-blue-600 flex items-center justify-center flex-shrink-0">
+              <Users className="w-3.5 h-3.5" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-gray-900 leading-tight">
-                Daftar Pelanggan RT/RW Net
+              <h2 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
+                Daftar Pelanggan
               </h2>
-              <p className="text-xs text-gray-500 mt-1">
-                Pencatatan iuran & kirim kwitansi WhatsApp satu ketukan
+              <p className="text-[10px] sm:text-xs text-gray-500">
+                Pencatatan iuran & kirim kuitansi WA
               </p>
             </div>
           </div>
           <button
             onClick={handleOpenAddModal}
-            className="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-xs shadow-lg shadow-blue-600/30 flex items-center gap-1.5 transition active:scale-95 cursor-pointer flex-shrink-0"
+            className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs shadow-xs flex items-center gap-1 transition active:scale-95 cursor-pointer flex-shrink-0"
           >
-            <Plus className="w-4 h-4 stroke-[3]" />
+            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>Tambah</span>
           </button>
         </div>
 
-        {/* Counter Badges */}
-        <div className="grid grid-cols-3 gap-2">
-          <div className="bg-gray-50 rounded-2xl p-2.5 text-center border border-gray-200">
-            <span className="text-[10px] text-gray-500 font-medium block">Total Pelanggan</span>
-            <span className="text-base font-extrabold text-gray-900">{totalCount}</span>
+        {/* Counter Badges - Sleek Chips */}
+        <div className="grid grid-cols-3 gap-1.5">
+          <div className="bg-gray-50/80 rounded-xl py-1.5 px-2 text-center border border-gray-200/60">
+            <span className="text-[10px] text-gray-500 font-medium block leading-none">Total</span>
+            <span className="text-sm font-extrabold text-gray-900 mt-0.5 block">{totalCount}</span>
           </div>
-          <div className="bg-green-50 rounded-2xl p-2.5 text-center border border-green-200">
-            <span className="text-[10px] text-green-700 font-medium block">Sudah Lunas</span>
-            <span className="text-base font-extrabold text-green-600">{paidCount}</span>
+          <div className="bg-emerald-50/80 rounded-xl py-1.5 px-2 text-center border border-emerald-200/60">
+            <span className="text-[10px] text-emerald-700 font-medium block leading-none">Lunas</span>
+            <span className="text-sm font-extrabold text-emerald-600 mt-0.5 block">{paidCount}</span>
           </div>
-          <div className="bg-red-50 rounded-2xl p-2.5 text-center border border-red-200">
-            <span className="text-[10px] text-red-700 font-medium block">Belum Bayar</span>
-            <span className="text-base font-extrabold text-red-600">{unpaidCount}</span>
+          <div className="bg-rose-50/80 rounded-xl py-1.5 px-2 text-center border border-rose-200/60">
+            <span className="text-[10px] text-rose-700 font-medium block leading-none">Belum</span>
+            <span className="text-sm font-extrabold text-rose-600 mt-0.5 block">{unpaidCount}</span>
           </div>
         </div>
 
@@ -206,57 +212,74 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
           <button
             onClick={() => setIsQuickBillingOpen(true)}
             type="button"
-            className="w-full mt-3 min-h-[44px] py-2.5 px-4 rounded-2xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-extrabold text-xs shadow-md shadow-orange-500/25 flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full mt-2 min-h-[36px] py-1.5 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:from-orange-700 active:to-amber-700 text-white font-bold text-xs shadow-2xs flex items-center justify-center gap-1.5 transition active:scale-[0.98] cursor-pointer"
           >
-            <Send className="w-4 h-4" />
-            <span>Mode Tagih Cepat via WA ({unpaidCount} Belum Bayar)</span>
+            <Send className="w-3.5 h-3.5" />
+            <span>Tagih Cepat via WA ({unpaidCount} Belum Bayar)</span>
           </button>
         )}
       </div>
 
       {/* Search & Filters */}
-      <div className="space-y-2.5">
-        {/* Search Input */}
-        <div className="relative">
-          <label htmlFor="customer-search" className="sr-only">Cari Nama Pelanggan / No HP</label>
-          <Search className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <input
-            id="customer-search"
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari nama pelanggan, no HP, atau wilayah/server..."
-            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-bold text-gray-900 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
+      <div className="space-y-1.5">
+        {/* Search Input & View Toggle */}
+        <div className="flex items-center gap-1.5">
+          <div className="relative flex-1">
+            <label htmlFor="customer-search" className="sr-only">Cari Nama Pelanggan / No HP</label>
+            <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              id="customer-search"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari pelanggan, HP, wilayah..."
+              className="w-full pl-8 pr-7 py-2 rounded-xl bg-gray-50/90 border border-gray-200 text-xs font-semibold text-gray-900 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Density Toggle Button */}
+          <button
+            onClick={() => setIsCompactView(!isCompactView)}
+            type="button"
+            className={`min-h-[36px] px-2.5 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1 transition active:scale-95 flex-shrink-0 cursor-pointer ${
+              isCompactView 
+                ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+            }`}
+            title={isCompactView ? "Mode Rapat (Aktif)" : "Mode Renggang"}
+          >
+            {isCompactView ? <LayoutList className="w-3.5 h-3.5 text-blue-600" /> : <LayoutGrid className="w-3.5 h-3.5 text-gray-500" />}
+            <span className="hidden sm:inline">{isCompactView ? 'Rapat' : 'Detail'}</span>
+          </button>
         </div>
 
         {/* Area Filter Horizontal Scroll */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
+        <div className="flex items-center gap-1 overflow-x-auto pb-0.5 no-scrollbar text-xs">
           <button
             onClick={() => setSelectedArea('ALL')}
-            className={`min-h-[40px] px-3.5 py-1.5 rounded-xl font-bold whitespace-nowrap transition active:scale-95 flex-shrink-0 ${
+            className={`min-h-[30px] px-2.5 py-1 rounded-lg font-semibold whitespace-nowrap transition active:scale-95 flex-shrink-0 text-xs ${
               selectedArea === 'ALL'
-                ? 'bg-blue-600 text-white shadow-sm'
+                ? 'bg-blue-600 text-white shadow-2xs'
                 : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
             }`}
           >
-            Semua Wilayah / Server
+            Semua Wilayah
           </button>
           {areas.map((area) => (
             <button
               key={area}
               onClick={() => setSelectedArea(area)}
-              className={`min-h-[40px] px-3.5 py-1.5 rounded-xl font-bold whitespace-nowrap transition active:scale-95 flex-shrink-0 ${
+              className={`min-h-[30px] px-2.5 py-1 rounded-lg font-semibold whitespace-nowrap transition active:scale-95 flex-shrink-0 text-xs ${
                 selectedArea === area
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-blue-600 text-white shadow-2xs'
                   : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
               }`}
             >
@@ -265,13 +288,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
           ))}
         </div>
 
-        {/* Status Filter Tabs */}
-        <div className="grid grid-cols-3 gap-1.5 bg-gray-50 p-1 rounded-2xl border border-gray-200">
+        {/* Status Filter Tabs - Segmented Pill Bar */}
+        <div className="grid grid-cols-3 gap-1 bg-gray-100 p-0.5 rounded-xl border border-gray-200/60">
           <button
             onClick={() => setStatusFilter('ALL')}
-            className={`min-h-[44px] rounded-xl font-bold text-xs transition border border-transparent ${
+            className={`min-h-[32px] rounded-lg font-bold text-xs transition ${
               statusFilter === 'ALL'
-                ? 'bg-white text-gray-900 shadow-sm border-gray-200'
+                ? 'bg-white text-gray-900 shadow-2xs'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -279,9 +302,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
           </button>
           <button
             onClick={() => setStatusFilter('UNPAID')}
-            className={`min-h-[44px] rounded-xl font-bold text-xs transition border border-transparent ${
+            className={`min-h-[32px] rounded-lg font-bold text-xs transition ${
               statusFilter === 'UNPAID'
-                ? 'bg-red-100 text-red-700 border-red-200 shadow-sm'
+                ? 'bg-red-50 text-red-700 border border-red-200/80 shadow-2xs'
                 : 'text-gray-500 hover:text-red-600'
             }`}
           >
@@ -289,10 +312,10 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
           </button>
           <button
             onClick={() => setStatusFilter('PAID')}
-            className={`min-h-[44px] rounded-xl font-bold text-xs transition border border-transparent ${
+            className={`min-h-[32px] rounded-lg font-bold text-xs transition ${
               statusFilter === 'PAID'
-                ? 'bg-green-100 text-green-700 border-green-200 shadow-sm'
-                : 'text-gray-500 hover:text-green-600'
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs'
+                : 'text-gray-500 hover:text-emerald-600'
             }`}
           >
             Lunas
@@ -300,200 +323,233 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
         </div>
       </div>
 
-      {/* Customer List Cards */}
-      <div className="space-y-2.5">
+      {/* Customer List Items */}
+      <div className="space-y-1.5">
         {filteredCustomers.length === 0 ? (
-          <div className="bg-white border border-gray-200 rounded-3xl p-8 text-center shadow-sm">
-            <Users className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-            <p className="text-sm font-bold text-gray-700">Tidak ada pelanggan ditemukan</p>
-            <p className="text-xs text-gray-500 mt-1">Coba sesuaikan kata kunci pencarian atau filter wilayah/server Anda</p>
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-2xs">
+            <Users className="w-8 h-8 text-gray-300 mx-auto mb-1.5" />
+            <p className="text-xs font-bold text-gray-700">Tidak ada pelanggan ditemukan</p>
+            <p className="text-[11px] text-gray-400 mt-0.5">Coba sesuaikan kata kunci pencarian atau filter wilayah</p>
           </div>
         ) : (
-          filteredCustomers.slice(0, displayLimit).map((customer) => (
-            <div
-              key={customer.id}
-              className={`p-3.5 rounded-2xl border transition-all ${
-                customer.is_paid
-                  ? 'bg-green-50 border-green-100 text-gray-700'
-                  : 'bg-white border-gray-200 text-gray-900 shadow-sm'
-              }`}
-            >
-              {/* Card Top: Name & Status */}
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-extrabold text-sm text-gray-900 leading-snug">
-                      {customer.name}
-                    </h4>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-500">
-                    <span className="inline-flex items-center gap-1 text-gray-600">
-                      <MapPin className="w-3 h-3 text-blue-500" /> {customer.area}
-                    </span>
-                    <span>•</span>
-                    <span className={`font-bold ${customer.is_paid ? 'text-green-700' : 'text-blue-600'}`}>
-                      {formatIDR(customer.monthly_fee)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Status Pill & Discrete Menu */}
-                <div className="flex items-center gap-1.5 relative">
-                  {customer.is_paid ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-green-100 text-green-700 border border-green-200">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> LUNAS
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-red-100 text-red-700 border border-red-200">
-                      <Clock className="w-3.5 h-3.5" /> BELUM
-                    </span>
-                  )}
-                  
-                  {/* MoreVertical Button */}
-                  <button
-                    onClick={() => setActiveMenuCustId(activeMenuCustId === customer.id ? null : customer.id)}
-                    className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition active:scale-95 cursor-pointer"
-                    title="Menu Opsi"
-                  >
-                    <MoreVertical className="w-4 h-4" />
-                  </button>
-
-                  {/* Floating Action Menu */}
-                  {activeMenuCustId === customer.id && (
-                    <div className="absolute right-0 top-8 z-30 bg-white border border-gray-200 rounded-2xl shadow-xl p-1 w-36 animate-fadeIn">
-                      <button
-                        onClick={() => {
-                          setActiveMenuCustId(null);
-                          handleOpenEditModal(customer);
-                        }}
-                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2 transition"
-                      >
-                        <Pencil className="w-3.5 h-3.5 text-blue-500" />
-                        <span>Edit Data</span>
-                      </button>
-                      {customer.is_paid && onUnpayPayment && (
-                        <button
-                          onClick={() => {
-                            setActiveMenuCustId(null);
-                            onUnpayPayment(customer);
-                          }}
-                          className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-orange-600 hover:bg-orange-50 flex items-center gap-2 transition"
-                        >
-                          <RotateCcw className="w-3.5 h-3.5 text-orange-500" />
-                          <span>Batalkan Lunas</span>
-                        </button>
-                      )}
-                      <button
-                        onClick={() => {
-                          setActiveMenuCustId(null);
-                          handleDeleteCust(customer);
-                        }}
-                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 flex items-center gap-2 transition"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 text-red-500" />
-                        <span>Hapus</span>
-                      </button>
+          filteredCustomers.slice(0, displayLimit).map((customer) => {
+            const isExpanded = expandedCardCustId === customer.id;
+            
+            return (
+              <div
+                key={customer.id}
+                className={`rounded-xl border transition-all ${
+                  customer.is_paid
+                    ? 'bg-emerald-50/30 border-emerald-100 hover:border-emerald-200'
+                    : 'bg-white border-gray-200/80 shadow-2xs hover:border-blue-200'
+                } ${isCompactView ? 'p-2 sm:p-2.5' : 'p-3.5'}`}
+              >
+                {/* Main Row */}
+                <div className="flex items-center justify-between gap-2">
+                  {/* Left: Avatar + Details */}
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    {/* Compact Avatar Initial */}
+                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-xs ${
+                      customer.is_paid
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-blue-50 text-blue-600 border border-blue-200/60'
+                    }`}>
+                      {customer.name.slice(0, 1).toUpperCase()}
                     </div>
-                  )}
-                </div>
-              </div>
 
-              {/* Card Bottom: Big Action Buttons */}
-              <div className={`mt-3 pt-2.5 border-t flex items-center justify-between gap-2 ${
-                customer.is_paid ? 'border-green-200/60' : 'border-gray-100'
-              }`}>
-                <span className="text-[11px] text-gray-500 truncate">
-                  HP: {customer.phone}
-                </span>
+                    <div className="min-w-0 flex-1">
+                      {/* Name & Nominal */}
+                      <div className="flex items-baseline gap-1.5">
+                        <h4 className="font-bold text-xs sm:text-sm text-gray-900 truncate leading-snug">
+                          {customer.name}
+                        </h4>
+                        <span className="text-[10px] text-gray-300">•</span>
+                        <span className={`text-xs font-extrabold ${customer.is_paid ? 'text-emerald-600' : 'text-blue-600'}`}>
+                          {formatIDR(customer.monthly_fee)}
+                        </span>
+                      </div>
 
-                <div className="flex items-center gap-1.5">
-                  {customer.is_paid ? (
-                    /* Kwitansi WhatsApp Button */
-                    <a
-                      href={getWhatsAppReceiptUrl(customer, tenant)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="min-h-[48px] px-3.5 py-2 rounded-xl bg-white hover:bg-green-50 active:bg-green-100 text-green-600 border border-green-200 text-xs font-bold flex items-center gap-1.5 transition active:scale-95"
-                    >
-                      <MessageSquare className="w-4 h-4 text-green-500" />
-                      <span>Kirim Kwitansi WA</span>
-                    </a>
-                  ) : (
-                    /* Two Actions: Terima Cash & Tagih WA */
-                    <>
-                      <a
-                        href={getWhatsAppReminderUrl(customer, tenant)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="min-h-[48px] px-3 py-2 rounded-xl bg-white hover:bg-orange-50 active:bg-orange-100 text-orange-600 border border-orange-200 text-xs font-bold flex items-center gap-1 transition active:scale-95"
-                        title="Kirim pengingat WA"
-                      >
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Ingatkan WA</span>
-                      </a>
-
-                      <button
-                        onClick={() => handleTerimaCash(customer)}
-                        type="button"
-                        className="min-h-[48px] px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-black text-xs shadow-sm flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
-                      >
-                        <span>TERIMA CASH</span>
-                        <Check className="w-4 h-4 stroke-[3]" />
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Collapsible Riwayat Pembayaran */}
-              <div className="mt-2.5 pt-2 border-t border-dashed border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => setExpandedHistoryCustId(expandedHistoryCustId === customer.id ? null : customer.id)}
-                  className="text-[11px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 cursor-pointer py-1"
-                >
-                  <History className="w-3.5 h-3.5" />
-                  <span>
-                    {expandedHistoryCustId === customer.id ? 'Sembunyikan Riwayat Bayar' : 'Lihat Riwayat Bayar'}
-                  </span>
-                </button>
-
-                {expandedHistoryCustId === customer.id && (
-                  <div className="mt-2 p-2.5 bg-gray-50 rounded-xl border border-gray-200 space-y-1.5">
-                    {getCustomerPaymentHistory(customer.id, customer.name).length === 0 ? (
-                      <p className="text-[11px] text-gray-400 italic text-center py-1">
-                        Belum ada riwayat transaksi pembayaran tercatat
-                      </p>
-                    ) : (
-                      <div className="divide-y divide-gray-200">
-                        {getCustomerPaymentHistory(customer.id, customer.name).map((tx) => (
-                          <div key={tx.id} className="py-1.5 flex items-center justify-between text-[11px]">
-                            <div>
-                              <p className="font-bold text-gray-800">
-                                {formatDateIndo(tx.created_at)}
-                              </p>
-                              <p className="text-[10px] text-gray-500">{tx.notes || 'Iuran Bulanan'}</p>
-                            </div>
-                            <span className="font-extrabold text-green-600">
-                              {formatIDR(tx.amount)}
+                      {/* Area & Phone */}
+                      <div className="flex items-center gap-1.5 mt-0.5 text-[10px] sm:text-[11px] text-gray-500 truncate">
+                        <span className="inline-flex items-center gap-0.5 text-gray-600 truncate max-w-[120px] sm:max-w-none">
+                          <MapPin className="w-2.5 h-2.5 text-blue-500 flex-shrink-0" />
+                          <span className="truncate">{customer.area}</span>
+                        </span>
+                        {customer.phone && (
+                          <>
+                            <span className="text-gray-300">•</span>
+                            <span className="font-mono text-[10px] text-gray-500 flex items-center gap-0.5 truncate">
+                              <Phone className="w-2.5 h-2.5 text-gray-400 flex-shrink-0" />
+                              <span>{customer.phone}</span>
                             </span>
-                          </div>
-                        ))}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Actions Cluster */}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {customer.is_paid ? (
+                      <>
+                        <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200/80">
+                          <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                          <span>Lunas</span>
+                        </span>
+
+                        {customer.phone && (
+                          <a
+                            href={getWhatsAppReceiptUrl(customer, tenant)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="min-h-[28px] px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 text-emerald-700 border border-emerald-200 text-[11px] font-semibold flex items-center gap-1 transition active:scale-95"
+                            title="Kirim Kuitansi WhatsApp"
+                          >
+                            <MessageSquare className="w-3 h-3 text-emerald-600" />
+                            <span className="hidden sm:inline">Kuitansi</span>
+                          </a>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {customer.phone && (
+                          <a
+                            href={getWhatsAppReminderUrl(customer, tenant)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="min-h-[28px] w-7 h-7 sm:w-auto sm:px-2 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 active:bg-orange-200 text-orange-600 border border-orange-200 text-[11px] font-bold flex items-center justify-center gap-1 transition active:scale-95"
+                            title="Kirim Tagihan WhatsApp"
+                          >
+                            <Send className="w-3 h-3" />
+                            <span className="hidden sm:inline">Tagih</span>
+                          </a>
+                        )}
+
+                        <button
+                          onClick={() => handleTerimaCash(customer)}
+                          type="button"
+                          className="min-h-[28px] px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs shadow-2xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
+                        >
+                          <Check className="w-3 h-3 stroke-[3]" />
+                          <span>Bayar</span>
+                        </button>
+                      </>
+                    )}
+
+                    {/* Accordion Toggle */}
+                    <button
+                      type="button"
+                      onClick={() => setExpandedCardCustId(isExpanded ? null : customer.id)}
+                      className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition"
+                      title={isExpanded ? "Sembunyikan Detail" : "Lihat Detail"}
+                    >
+                      {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    </button>
+
+                    {/* More Menu */}
+                    <div className="relative">
+                      <button
+                        onClick={() => setActiveMenuCustId(activeMenuCustId === customer.id ? null : customer.id)}
+                        className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition active:scale-95 cursor-pointer"
+                        title="Menu Opsi"
+                      >
+                        <MoreVertical className="w-3.5 h-3.5" />
+                      </button>
+
+                      {/* Floating Action Menu */}
+                      {activeMenuCustId === customer.id && (
+                        <div className="absolute right-0 top-7 z-30 bg-white border border-gray-200 rounded-xl shadow-lg p-1 w-36 animate-fadeIn">
+                          <button
+                            onClick={() => {
+                              setActiveMenuCustId(null);
+                              handleOpenEditModal(customer);
+                            }}
+                            className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-1.5 transition"
+                          >
+                            <Pencil className="w-3 h-3 text-blue-500" />
+                            <span>Edit Data</span>
+                          </button>
+                          {customer.is_paid && onUnpayPayment && (
+                            <button
+                              onClick={() => {
+                                setActiveMenuCustId(null);
+                                onUnpayPayment(customer);
+                              }}
+                              className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-orange-600 hover:bg-orange-50 flex items-center gap-1.5 transition"
+                            >
+                              <RotateCcw className="w-3 h-3 text-orange-500" />
+                              <span>Batalkan Lunas</span>
+                            </button>
+                          )}
+                          <button
+                            onClick={() => {
+                              setActiveMenuCustId(null);
+                              handleDeleteCust(customer);
+                            }}
+                            className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 flex items-center gap-1.5 transition"
+                          >
+                            <Trash2 className="w-3 h-3 text-red-500" />
+                            <span>Hapus</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Collapsible Detail Panel */}
+                {isExpanded && (
+                  <div className="mt-2 pt-2 border-t border-gray-100 text-xs space-y-1.5 animate-fadeIn">
+                    {customer.notes && (
+                      <div className="p-2 bg-gray-50 rounded-lg text-[11px] text-gray-600">
+                        <span className="font-semibold text-gray-700">Catatan / Alamat: </span>
+                        {customer.notes}
                       </div>
                     )}
+
+                    {/* Riwayat Pembayaran */}
+                    <div className="pt-1">
+                      <div className="flex items-center justify-between text-[11px] text-gray-500 font-semibold mb-1">
+                        <span className="flex items-center gap-1">
+                          <History className="w-3 h-3 text-blue-500" /> Riwayat Pembayaran:
+                        </span>
+                      </div>
+
+                      {getCustomerPaymentHistory(customer.id, customer.name).length === 0 ? (
+                        <p className="text-[10px] text-gray-400 italic py-0.5">
+                          Belum ada riwayat transaksi pembayaran tercatat
+                        </p>
+                      ) : (
+                        <div className="divide-y divide-gray-100 bg-gray-50/80 rounded-lg p-1.5">
+                          {getCustomerPaymentHistory(customer.id, customer.name).map((tx) => (
+                            <div key={tx.id} className="py-1 flex items-center justify-between text-[10px]">
+                              <div>
+                                <span className="font-semibold text-gray-700">
+                                  {formatDateIndo(tx.created_at)}
+                                </span>
+                                <span className="text-gray-400 ml-1">({tx.notes || 'Iuran'})</span>
+                              </div>
+                              <span className="font-bold text-emerald-600">
+                                {formatIDR(tx.amount)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
-            </div>
-          ))
+            );
+          })
         )}
 
-        {/* Load More Button for 900 list */}
+        {/* Load More Button */}
         {filteredCustomers.length > displayLimit && (
           <div className="pt-2 text-center">
             <button
               onClick={() => setDisplayLimit(prev => prev + 30)}
-              className="px-5 py-2.5 rounded-2xl bg-white border border-gray-200 text-xs font-extrabold text-blue-600 shadow-sm hover:bg-gray-50 transition active:scale-95"
+              className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold text-blue-600 shadow-2xs hover:bg-gray-50 transition active:scale-95"
             >
               Tampilkan Lebih Banyak ({filteredCustomers.length - displayLimit} lagi)
             </button>

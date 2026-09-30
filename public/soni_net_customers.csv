@@ -1,0 +1,294 @@
+ID,Nama Pelanggan,Area,Detail Alamat,Nominal Tagihan (Rp),No WhatsApp,Tgl Jatuh Tempo,Status Bayar,Catatan Teknis
+CUST-DET-001,Sansan,Kp. Sadangsari,Kp Sadangsari RT 06 RW 04,150000,085722561255,1,LUNAS,
+CUST-DET-002,Amang Barabadan,Kp. Sadangsari,Kp Sadangsari RT 06 RW 04,200000,083142224216,1,LUNAS,
+CUST-DET-003,Teh Neng Uled,Kp. Sadangsari,Kp Sadangsari RT 06 RW 04,150000,,3,BELUM BAYAR,
+CUST-DET-004,Mamah Idik,Kp. Sadangsari,Kp Sadangsari RT 06 RW 04,150000,085721760879,3,LUNAS,
+CUST-DET-005,Bu Fauziah,Kp. Sadangsari,Kp Sadangsari RT 04 RW 04,300000,08951947719,1,LUNAS,
+CUST-DET-006,Kardun,Kp. Sadangsari,Kp Sadangsari RT 06 RW 04,100000,,1,BELUM BAYAR,
+CUST-DET-007,Rizki Putra,Kp. Jati Mekar,Kp Jati Mekar RT 03 RW 06 Boma,0,087722626204,1,BELUM BAYAR,
+CUST-DET-009,Saodah,Kp. Muara,Kp Muara,150000,081320692626,1,LUNAS,
+CUST-DET-010,Pa Iden,Kavling Mang Giri,Kavling Mang Giri,150000,085314880044,1,LUNAS,
+CUST-DET-011,Aef,Kp. Sadangsari,Kp. Sadangsari,150000,089696987131,1,LUNAS,
+CUST-DET-012,Fahmi,Kp. Sadangsari,Kp. Sadangsari,150000,081807452228,1,BELUM BAYAR,
+CUST-DET-013,Fajar,Kp. Sadangsari,Kp. Sadangsari,150000,083820318908,1,LUNAS,
+CUST-DET-014,Lingga,Astana Girang,Astana Girang RT 02,150000,089515588596,10,LUNAS,
+CUST-DET-015,Mamah Galing,Kp. Ciodeng,Kp Ciodeng Al Harus,150000,083167111423,1,LUNAS,
+CUST-DET-016,Abang Azhari,Cibadak,Cibadak Depan Dokter Bibin,150000,081223855736,1,LUNAS,
+CUST-DET-017,Destri Ciputat,Kp. Ciputat,Ciputat RW 07,200000,082130600033,1,LUNAS,
+CUST-DET-018,Kiandry,Kavling Cibuyung,Kavling Cibuyung RT 06 RW 04,250000,085861092877,1,LUNAS,
+CUST-DET-019,Aldi,Kp. Sadangsari,Kp Sadangsari RT 02 RW 04,150000,085158191600,1,LUNAS,
+CUST-DET-020,Dandi,Kavling Cibuyung,Kavling Cibuyung,150000,081221220242,1,LUNAS,
+CUST-DET-021,Iwan,Kavling Mang Giri,Kavling Mang Giri,150000,087722413943,1,LUNAS,
+CUST-DET-022,Mamah Eza,Kp. Sadangsari,Kp Sadangsari RT 05 RW 04,150000,083821175401,1,LUNAS,
+CUST-DET-023,Putri Wargi Dadan,Kp. Sadangsari,Kp Sadangsari RT 05 RW 04,150000,089656509435,1,LUNAS,
+CUST-DET-024,Gery Mekar Mekar Sari,Mekar Sari,Mekar Sari,100000,08981579672,1,LUNAS,
+CUST-DET-025,Alfian Bauan,Kp. Bauwan,Kp. Bauwan,150000,0882001368877,1,LUNAS,
+CUST-DET-026,Annisa Astana Girang,Astana Girang,Astana Girang,150000,081462226005,1,LUNAS,
+CUST-DET-027,Keyla,Kavling Mang Giri,Kavling Mang Giri,150000,087824138988,1,LUNAS,
+CUST-DET-028,Mila Kampung Uak,Kp. Uak,Kp. Uak,0,08987950212,1,LUNAS,
+CUST-DET-029,Teh Wida,Kp. Sadangsari,Kp Sadangsari RT 06 RW 04,150000,085776479093,1,LUNAS,
+CUST-DET-030,Fahrun,Kp. Sadangsari,Kp Sadangsari RT 03 RW 04,150000,088239033169,1,BELUM BAYAR,
+CUST-DET-031,Yayah Rokayah,Kp. Babakan,Kp Babakan,150000,089528445287,1,BELUM BAYAR,
+CUST-DET-032,Sri Yani,Kp. Ciodeng,Kp Babak Ciodeng,150000,089693688234,1,BELUM BAYAR,
+CUST-DET-033,Amiin,Kp. Sadangsari,Kp Sadangsari RT 05 RW 04,150000,083862443635,1,LUNAS,
+CUST-DET-034,Abang Angga,Kavling Mang Giri,Kavling Mang Giri,150000,083822853857,1,LUNAS,
+CUST-DET-035,Predy Putra Citereup Indah,Citeureup Indah,Citeureup Indah,200000,082121345787,1,LUNAS,
+CUST-DET-036,Hasanah Citeureup Indah,Citeureup Indah,Citeureup Indah,200000,081387354757,1,LUNAS,
+CUST-DET-037,Didit Permana,Kavling Amaya,Kavling Amaya.,150000,082219400074,1,LUNAS,
+CUST-DET-038,Eden Kontrakan Pulo,Kp. Pulo,Kp. Pulo,100000,08388689614,1,BELUM BAYAR,
+CUST-DET-039,Yawwan,Mekar Sari,Kp Mekar Sari,250000,089670268989,1,BELUM BAYAR,
+CUST-DET-040,Asep Cibogo,Cibogo,Cibogo,150000,085722872796,1,LUNAS,
+CUST-DET-041,Ujang Cibogo,Cibogo,Cibogo,150000,081214626559,1,LUNAS,
+CUST-DET-042,Wawan Cibogo,Cibogo,Cibogo,150000,082117136033,1,LUNAS,
+CUST-DET-043,Hendi Cibogo,Cibogo,Cibogo,150000,08970874117,1,BELUM BAYAR,
+CUST-DET-044,Takkuheran Komplek BMI Blok E,Komplek BMI,Komplek BMI,150000,082246531329,1,LUNAS,
+CUST-DET-045,Mila Putri,Kp. Ciodeng,Mutiara Ciodeng,0,082176383888,1,LUNAS,User1
+CUST-DET-046,Maryanah Bukit Mulya,Manggahang / Bukit Mulya,Manggahang 1 RT 01 RW 8,150000,083822029727,1,LUNAS,User3
+CUST-DET-047,Doro Manggahang,Manggahang / Bukit Mulya,RT 06 RW 09,0,083172866981,1,LUNAS,User3
+CUST-DET-048,Abang Saygon,Komplek BMI,BMI Blok c 7 Nomor 15,150000,081320860677,1,LUNAS,User2
+CUST-DET-055,Delia,Kp. Muara,"Muara RT 04 RW 07, Tanggal 1 = Tanggal 1",150000,089623742440,1,LUNAS,User17
+CUST-DET-056,Thessa Tri,Kavling Cibuyung,"Kavling Cibuyung, Tanggal 1",150000,085559093846,1,LUNAS,User22
+CUST-DET-057,Asep Stoberi,Mekar Sari,"Mekar Sari, Tanggal 30",200000,085323066602,30,LUNAS,User12
+CUST-DET-058,Shean,Kavling Azam,"Kavling Azam, Tanggal 30",150000,085388888262,30,LUNAS,Admin
+CUST-DET-059,Sayu / Eki Tahap 3,Kavling Cibuyung,Kavling Cibuyung,250000,081221441654,1,LUNAS,User Dhcp
+CUST-DET-061,Desi Ratnasari,Kp. Babakan,Kp Babakan RT 02 RW 01,150000,083850284803,1,BELUM BAYAR,
+CUST-DET-062,Asep Sury Teh Iis,Kp. Babakan,Kp Babakan RT 02 RW 01,150000,085220974943,1,LUNAS,Pelanggan16
+CUST-DET-063,Dewi Kontrakan Mang Ade,Kp. Sadangsari,Kp Sadangsari RT 05 RW 04,150000,081220177466,1,LUNAS,Pelanggan9
+CUST-DET-064,Papah Amel,Kp. Sadangsari,Kp Sadangsari RT 05 RW 04,150000,081564986227,1,LUNAS,Pelanggan9
+CUST-DET-066,Reva,Kavling Cibuyung,Kavling Cibuyung,200000,087820009341,5,BELUM BAYAR,User30
+CUST-DET-068,Rizky Medan,Kp. Sadangsari,Kp Sadangsari RT 06 RW 04,120000,089613205954,5,LUNAS,Admin14
+CUST-DET-069,Hendra Cibadak,Kp. Bauwan,Bauwan RT 09 RW 03,200000,081321967251,1,LUNAS,Pelanggan3
+CUST-DET-070,Rian Kon Pa Lurah,Kp. Bauwan,Bauwan RT 09 RW 03,150000,082117014138,1,LUNAS,Pelanggan4
+CUST-DET-071,Surya 89 Andir,Kp. Bauwan,Bauwan RT 07 RW 03,200000,082121782506,1,LUNAS,Pelanggan 8
+CUST-DET-072,Fitri Ciputat,Kp. Muara,RT 02 RW 07 Muara,200000,083151600560,1,LUNAS,User17
+CUST-DET-073,Dera Mayretha,Kp. Ciodeng,Ciodeng Timur RT 06 RW8,200000,082112497890,1,LUNAS,Pelanggan4
+CUST-DET-074,Yayuk Supriat Na,Cibogo,"Cibogo RT 02 RW 09, Ds Sukamukti Kec Katapang",150000,081249066661,1,LUNAS,Admin 1
+CUST-DET-077,Ita Rosita Kavling Mutiara,Umum / Belum Terdata,RT 06 RW 10,150000,0888237341808,1,LUNAS,Pelanggan10
+CUST-DET-078,Om Agus / Nela,Kp. Sadangsari,Kp Sadangsari RT 03 RW 04,150000,087778999155,1,LUNAS,Admin
+CUST-DET-081,Nana Gp,Manggahang / Bukit Mulya,Kp Manggahang 2,100000,089612849005,1,LUNAS,Admin6
+CUST-DET-083,Akila Batu Reog,Komplek BCI / Batu Reog,"Kmplek BRCI RT 04 RW 05, 896-0107-6173",150000,0895323382136896,1,LUNAS,Pelanggan3
+CUST-DET-084,Muhammad Nasir,Kp. Bauwan,Kp Bauwan RT 09 RW 03,150000,081324014930,1,BELUM BAYAR,Admin6
+CUST-DET-085,Devi RT 04,Kp. Sadangsari,Kp Sadangsari RT 04 RW 04,150000,087760639952,1,LUNAS,Admin15
+CUST-DET-086,Yuni Kontrakan Bu Haji Ida,Kp. Sadangsari,Kp Sadangsari RT 05 RW 04,300000,082129848076,1,BELUM BAYAR,Admin27
+CUST-DET-087,Bu Haji Hera,Kp. Ciodeng,Kp Ciodeng Barat,0,082120195994,1,BELUM BAYAR,Pelanggan4
+CUST-DET-088,Nizar Irigasi Bauwan,Kp. Bauwan,Ciodeng 1 RT 04 RW 03,150000,083821465938,1,LUNAS,Admin
+CUST-DET-090,Silvi Kavling Azam,Kp. Sadangsari,RT 02 RW 04 Sadang Sari,150000,0895611701784,1,LUNAS,Admin1
+CUST-DET-091,Risna Mngghang2,Manggahang / Bukit Mulya,Cihapit RT 08 RW 06,150000,085559605922,1,LUNAS,Admin 8
+CUST-DET-093,Yana Manggahang 2,Manggahang / Bukit Mulya,Kp Cihapit RT 08 RW 06,150000,089691346016,1,LUNAS,Admin 9
+CUST-DET-094,Hendri BMI,Komplek BMI,"Kmplek BMI Blok G7 64, Planggan1 Tanggal 1",200000,081311260386,1,LUNAS,
+CUST-DET-096,Rayhan Ranca Manyar,Tambakan / Ranca Manyar,Kp Tambakan RT 02 RW 01,150000,083151000416,1,LUNAS,Pelanggan6
+CUST-DET-097,Pa Aan Jembatan,Kp. Muara,Kp Muara Andir RT 05 RW 7,150000,083850322498,1,LUNAS,Pelanggan13
+CUST-DET-098,Atang,Kp. Krenceng,Kp Krenceng RT RW,180000,08083114775380,1,OFF,Admin4
+CUST-DET-100,Asep Aw,Kp. Ciputat,Kp Ciputat RT 05 RW 06,200000,081395194676,1,LUNAS,User3
+CUST-DET-101,Teh Ida Muara,Kp. Muara,Kp Muara RT 02 RW 7,200000,089699497343,1,LUNAS,User5
+CUST-DET-102,Erlea Kusdiati Permana,Kavling Cibuyung,Kavling Cibuyung Tahap 3,150000,081395800501,1,BELUM BAYAR,User3
+CUST-DET-103,Nunuy D3 No 10,Komplek BCI / Batu Reog,BCI RT RW Batu Reog,150000,085352726650,1,LUNAS,Pelanggan4
+CUST-DET-104,Ira Wati,Cibogo,Kp Cibogo RT 01 RW 08,150000,08983087539,1,LUNAS,Admin9
+CUST-DET-105,Abang Gokma Verdias,Manggahang / Bukit Mulya,Manggahang 1 RT 02 RW 08,125000,081222139144,1,LUNAS,Admin
+CUST-DET-106,Ah Yani Pasar Kemis,Pasar Kemis,RT 03 RW 14 Tmbl Ban,250000,081321034919,1,BELUM BAYAR,Admin 12
+CUST-DET-107,Pa Wawan Intan,Andir / Kp. Jembatan,"Kp Andir Gang Laskar, RT 05 RW 18",150000,083822721165,1,LUNAS,Admin13
+CUST-DET-108,Bibi Iwan,Manggahang / Bukit Mulya,Kp Manggahang 1,150000,,1,LUNAS,Admin15
+CUST-DET-110,Wahyu Pasir Huni,Ciawi Gede,Kp Ciawi Gede RT 01 RW 08,150000,081222952396,1,LUNAS,Admin 1
+CUST-DET-111,Asep BCI F2 No 10,Komplek BCI / Batu Reog,Batu Reog RT 04 RW 05,150000,082317743913,1,LUNAS,Pelanggan 5
+CUST-DET-112,Fauzi BMI,Komplek BMI,Blok i 4 No 10 RT16/11,150000,081322408480,1,LUNAS,Pelanggan33
+CUST-DET-113,Rina Depan Lapang,Cileweung Jati,Cileweung Jati RT 03 RW 6,150000,085864440293,1,LUNAS,Pelanggan 10
+CUST-DET-114,Gita Fitri Btc,Umum / Belum Terdata,Blok j No 24 RT 4 RW 5,150000,083116710722,1,LUNAS,Pelanggan7
+CUST-DET-115,Bu Juju,Kp. Muara,Kp Muara RT 03 RW 7,150000,085794438670,1,LUNAS,User16
+CUST-DET-116,Imas Masriah,Cileweung Jati,Kp Cileweung Jati RT5 RW6,150000,082258108661,1,LUNAS,Pelanggan5
+CUST-DET-117,Asep Suherman,Umum / Belum Terdata,Kav Mutiara Bauwa RT6/10,200000,083822743835,1,LUNAS,Pelanggan 22
+CUST-DET-118,Ayah,Kavling Cibuyung,Kavling Cibuyung Tahap 1,150000,081217622035,1,BELUM BAYAR,User 40
+CUST-DET-119,Desy,Kp. Bauwan,Kp Bauwan RT 08 RW 03,250000,081313233378,1,BELUM BAYAR,Pelanggan 17
+CUST-DET-122,Acong Blok I2 Nomor 2,Komplek BMI,BMI RT 10 RW 16,200000,081322939877,1,LUNAS,Pelanggan 34
+CUST-DET-123,Deri Yani RT 02 RW 04,Kavling Azam,Kavling Azam,150000,082119162125,1,LUNAS,Admin 8
+CUST-DET-124,Restu Cibuyung,Kavling Cibuyung,Kavling Cibuyung,400000,082117492755,1,LUNAS,User 27
+CUST-DET-125,Oke Cileweung Jati,Kp. Pulo,Kp Pulo RT 01 RW 7,150000,082317249332,1,LUNAS,Pelanggan 8
+CUST-DET-126,Nenden Batu Reog,Komplek BCI / Batu Reog,Blok D3 10 a RT 4/5,150000,085320580884,5,LUNAS,Pelanggan3
+CUST-DET-128,Den Erik Pulo,Kp. Pulo,RT 01 RW 07,150000,0895610375462,1,LUNAS,
+CUST-DET-129,Febriana Mahendra,Gamblok,"Gamblok RT 01/4, Plnggan2 Tgl 1",150000,083896666596,1,LUNAS,
+CUST-DET-130,Nengsih,Manggahang / Bukit Mulya,"Kp Bukit Mulya RT04/08, Planggn14 Tgal 1",150000,087716781748,1,LUNAS,
+CUST-DET-132,Gina / Fajri,Kavling Azam,Kavling Azam RT 02 RW 04,150000,0895321920688,1,LUNAS,Admin14
+CUST-DET-133,Astrid RT 06 RW 10,Umum / Belum Terdata,Kavling Mutiara,150000,085161771295,1,LUNAS,
+CUST-DET-134,Yani,Kp. Bauwan,Kp Bauwan RT 06 RW 10,200000,083190403106,1,LUNAS,Pelanggan35
+CUST-DET-135,Sri Kavling Cibuyung,Kp. Sadangsari,RT 06 RW 04 Sadang Sari,150000,082126488389,1,LUNAS,User10
+CUST-DET-137,Maya Kavling Cibuyung,Kavling Cibuyung,Tahap 3 Blok e No 14,150000,089698904689,1,LUNAS,User 3
+CUST-DET-138,Siti Marisa,Andir / Kp. Jembatan,Kp Jembatan RT 01 RW 09,150000,089654399416,1,LUNAS,User25
+CUST-DET-139,Imas Mulyani,Kp. Bauwan,Kp Bahuawan RT 05 RW 10,150000,082119841152,1,LUNAS,Pelanggan9
+CUST-DET-140,Ega,Kavling Mutiara Bauwan,"Mutiara Bauwan RT 06/ 10, 812-1477-3577",150000,081319259079812,1,LUNAS,
+CUST-DET-141,Febrianti BRTC,Komplek BCI / Batu Reog,Blok D3 No 13 RT 05/,400000,08886273882,1,LUNAS,Pelanggan 9
+CUST-DET-142,Enung,Kp. Babakan,Kp Babakan RT 05 RW 9,150000,088222448282,1,LUNAS,Pelanggan 5
+CUST-DET-143,Saepul Rohim BMI,Komplek BMI,Blok I2 No 1 RT10 / 16,170000,082321127575,1,BELUM BAYAR,
+CUST-DET-144,Hendri Kavling Azam,Kavling Azam,Blok 1 No 8 RT02 / 04,150000,089667777368089,1,LUNAS,Admin 16
+CUST-DET-145,Haji Pulo,Kp. Ciodeng,RT 01 / 07 Pulo Ciodeng,250000,081387006072,1,BELUM BAYAR,Admin
+CUST-DET-146,Aji Kavling Mutiara,Kavling Mutiara Bauwan,Kp Bauwan RT 06 RW 10,150000,082295708811,1,BELUM BAYAR,
+CUST-DET-147,Hera Tambakan,Tambakan / Ranca Manyar,Ranca Manyar RT 02/01,150000,088299294131,1,LUNAS,Admin23
+CUST-DET-149,Derry Adi Putra,Kp. Bauwan,"Kp Bauwan RT 09/03, Kontrakan Pa Lurah",150000,081952662812,1,BELUM BAYAR,
+CUST-DET-150,Suhaya Tambakan,Tambakan / Ranca Manyar,RT 03/01 Ranca Manyar,150000,085314192108,1,LUNAS,Admin
+CUST-DET-151,Yudi Amaya,Kavling Amaya,Blok,150000,085939110128,1,LUNAS,Pelanggan 9
+CUST-DET-152,Darman Tambakan,Tambakan / Ranca Manyar,RT 03 / 01 Ranca Manyar,150000,085703836643,1,LUNAS,Admin21
+CUST-DET-153,Yeni Bukit Mulya,Manggahang / Bukit Mulya,Manggahang RT 01 /08,150000,083861406100,1,LUNAS,Admin18
+CUST-DET-154,Salsabila Tambakan,Tambakan / Ranca Manyar,Ranca Manyar RT 03/01,150000,0895333865762,1,LUNAS,Admin 22
+CUST-DET-155,Dini Lisnawati,Tambakan / Ranca Manyar,Tambakan RT 03 / 01,150000,081394802365,1,LUNAS,Admin24
+CUST-DET-156,Icha Amelia,Kp. Bauwan,Bauwan RT 10 / 03,150000,081395396092,1,LUNAS,
+CUST-DET-157,M Akmal No 18 c,Tambakan / Ranca Manyar,Tambakan RT 03 RW 1,150000,089671529556,1,LUNAS,Admin25
+CUST-DET-158,Veri Tambakan,Tambakan / Ranca Manyar,RT 03 RW 1 Ranca Manyar,150000,085316714139,1,BELUM BAYAR,Admin26
+CUST-DET-159,Silvia Suwirman,Kavling Mutiara Bauwan,Mutiara Bauwan RT6/10,200000,082130294619,1,LUNAS,Pelanggan35
+CUST-DET-160,Falalinizai,Kavling Mutiara Bauwan,Mutiara Bauwan RT6/10,150000,082371628650,1,LUNAS,Pelanggan36
+CUST-DET-161,Bang Reno,Kp. Ciodeng,Ciodeng Timur RT 06/8,150000,082281787956,1,LUNAS,Admin
+CUST-DET-163,Arian Yonata,Kavling Sadewa,Kavling Sadewa,150000,082216111561,1,LUNAS,Admin
+CUST-DET-164,Izal Jembatan,Andir / Kp. Jembatan,Kp Jembatan RT 01 RW 09,150000,082240032069,1,LUNAS,User
+CUST-DET-166,Deala,Kavling Cibuyung,Cibuyung Tahap3,150000,082118679495,1,BELUM BAYAR,Admin39
+CUST-DET-167,Maryani,Manggahang / Bukit Mulya,Bukit Mulya RT 01 RW 08,150000,088802121961,1,LUNAS,Admin
+CUST-DET-168,Jasmine,Kp. Sadangsari,Sadang Sari RT 04/04,150000,089619633675,1,LUNAS,Admin30
+CUST-DET-169,Agus Ciko,Mekar Sari,Mekar Sari RT 01 RW 23,150000,08990335891,1,LUNAS,Admin17
+CUST-DET-170,Vera,Mekar Sari,Mekar Sari RT 01 RW 23,250000,08112250884,1,LUNAS,Admin18
+CUST-DET-171,Agus Kav Mang Giri,Kp. Sadangsari,Sadang Sari RT02 RW 04,150000,081322151232,1,LUNAS,Admin
+CUST-DET-172,Heri,Kp. Sadangsari,Sadang Sari RT02 RW 04,150000,082316113587,1,LUNAS,Admin
+CUST-DET-174,Gina Rahayu,Kavling Mutiara Bauwan,Mutiara Bauwan RT6/10,150000,083174562131,1,LUNAS,
+CUST-DET-175,Abdul,Perum Cipinang Indah,"Perum Cipinang Indah, Blok b No 18 RT02/05",150000,081322889669,1,LUNAS,Pelanggan10
+CUST-DET-176,Palah Mutiara Bauwan,Kavling Mutiara Bauwan,Blok b No 11 RT6/10,150000,081224768567,1,BELUM BAYAR,Pelanggan5
+CUST-DET-177,Risma,Kp. Ciodeng,Ciodeng Timur RT7/8,250000,082120565715,1,LUNAS,Admin
+CUST-DET-178,Fajar M Sidik,Kavling Cibuyung,Kavling Cibuyung Tahap 3,150000,089665513315,1,LUNAS,User
+CUST-DET-180,Hasan Sadikin,Kp. Ciputat,Kp Ciputat RT 04 RW 06,150000,089656126202,1,LUNAS,User
+CUST-DET-181,Via,Kp. Ciputat,Kp Ciputat RT 02 RW 06,175000,083820617145,1,LUNAS,User31
+CUST-DET-182,Kiki Riswandi,Kp. Ciodeng,Ciodeng Timur RT 07/08,100000,089524125619,1,LUNAS,Admin22
+CUST-DET-186,Deni Dagang,Umum / Belum Terdata,Kontrakan Lurah,100000,083159832248,1,LUNAS,Admin
+CUST-DET-187,Nina Unggu,Umum / Belum Terdata,Kontrakan Ungu,120000,083839363988,1,LUNAS,Admin
+CUST-DET-188,Nunung Solihat,Komplek BMI,BMI Blok H6 No 8a,150000,082130694823,1,LUNAS,
+CUST-DET-189,Egi Jembatan,Andir / Kp. Jembatan,RT 01 RW 09 Andir,150000,088219841614,1,BELUM BAYAR,User
+CUST-DET-190,Adi Setiadi,Manggahang / Bukit Mulya,Kp Bukit Mulya RT03/09,150000,082121601230,1,LUNAS,Admin20
+CUST-DET-191,Suwardi Loi,Komplek BMI,BMI Blok E1 No 2,150000,082246010707,15,LUNAS,
+CUST-DET-193,Kristina,Kp. Ciodeng,Ciodeng Timur RT 06 RW8,200000,085861015449,1,LUNAS,Admin
+CUST-DET-194,Eza,Kavling Azam,Kavling Azam RT01/04,150000,083103132561,1,LUNAS,Admin
+CUST-DET-195,Davin,Kp. Bauwan,Bauwan RT05 RW10,150000,085723384848,1,LUNAS,
+CUST-DET-196,Yunita,Komplek BMI,BMI Blok E2 No 31,200000,082119753299,1,LUNAS,
+CUST-DET-197,Sujiwono,Komplek BMI,BMI C4 No 8,150000,085174119743,1,LUNAS,
+CUST-DET-198,Dawok,Umum / Belum Terdata,Kontrakan Bhj Ida,100000,083115623206,1,BELUM BAYAR,Admin
+CUST-DET-199,Kondang,Kp. Sadangsari,Sadang Sari RT03 RW04,100000,083120113644,1,LUNAS,Admin
+CUST-DET-200,Aacep,Kavling Cibuyung,Cibuyung Tahap3,250000,08562184204,1,LUNAS,User
+CUST-DET-201,M Rizal,Manggahang / Bukit Mulya,Bukit Mulya RT01 RW8,150000,085803374765,1,LUNAS,Admin
+CUST-DET-203,Hendri IIP,Kp. Ciodeng,Ciodeng 1 RT03/RW03,150000,085798160942,1,LUNAS,
+CUST-DET-204,Pipit,Kp. Sadangsari,Sadang Sari RT4/4,150000,082262879812,1,LUNAS,Admin
+CUST-CHK-003,Edeun,Umum / Belum Terdata,Umum / Belum Terdata,100000,,1,BELUM BAYAR,
+CUST-CHK-005,Bi Mimin,Umum / Belum Terdata,Umum / Belum Terdata,170000,,1,LUNAS,
+CUST-CHK-006,Warung Empan,Umum / Belum Terdata,Umum / Belum Terdata,160000,,1,LUNAS,
+CUST-CHK-009,Adik Galing,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-047,Asep Bogo,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-048,Yawan,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-051,Mila Ciodeng,Kp. Ciodeng,Kp. Ciodeng,0,,1,LUNAS,
+CUST-CHK-058,Eki,Umum / Belum Terdata,Umum / Belum Terdata,230000,,1,LUNAS,
+CUST-CHK-059,Sumi,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-061,Asep Teh Iis,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-062,Dewi M Ade,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-072,Kopik,Umum / Belum Terdata,Umum / Belum Terdata,125000,,1,LUNAS,
+CUST-CHK-077,Akila Btc,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-078,M Nasir,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-080,Yuni b Haji,Umum / Belum Terdata,Umum / Belum Terdata,200000,,1,BELUM BAYAR,
+CUST-CHK-081,B Hera,Umum / Belum Terdata,Umum / Belum Terdata,0,,1,LUNAS,
+CUST-CHK-085,Bos Uje,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-090,Aan,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-092,Ajeng,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-115,Oke,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-121,Gina Fajri,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-123,Sri,Umum / Belum Terdata,Umum / Belum Terdata,100000,,1,LUNAS,
+CUST-CHK-130,Saeful,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-131,Hendri Azm,Kavling Azam,Kavling Azam,150000,,1,LUNAS,
+CUST-CHK-133,Hera Tmbkn,Tambakan / Ranca Manyar,Tambakan / Ranca Manyar,150000,,1,LUNAS,
+CUST-CHK-142,Peri,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-148,Gina Rhyu,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-156,Asep Dedi,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-164,Falah,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-165,Deni Satpam,Umum / Belum Terdata,Umum / Belum Terdata,100000,,1,LUNAS,
+CUST-CHK-167,Egi,Andir / Kp. Jembatan,Andir / Kp. Jembatan,150000,,1,LUNAS,
+CUST-CHK-168,Izal b,Umum / Belum Terdata,Umum / Belum Terdata,170000,,1,LUNAS,
+CUST-CHK-181,Bi Rasmin,Umum / Belum Terdata,Umum / Belum Terdata,100000,,1,LUNAS,
+CUST-CHK-183,Eka Sawal,Umum / Belum Terdata,Umum / Belum Terdata,180000,,1,LUNAS,
+CUST-CHK-184,Sarikin RT,Umum / Belum Terdata,Umum / Belum Terdata,200000,,1,LUNAS,
+CUST-CHK-185,Denisa,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-186,Kokom,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-188,Ashadi,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-189,Lukman,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-191,Ochi,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-192,Apriaman,Umum / Belum Terdata,Umum / Belum Terdata,200000,,1,BELUM BAYAR,
+CUST-CHK-193,Farida,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-194,Evi,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-195,Malik,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-196,Sheni,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-197,Rinda,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-198,Adit,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-200,Lala,Umum / Belum Terdata,Umum / Belum Terdata,170000,,1,LUNAS,
+CUST-CHK-201,Devi Sinaga,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-202,Miguel,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-203,Imas Ciputat,Kp. Ciputat,Kp. Ciputat,150000,,1,LUNAS,
+CUST-CHK-204,Putri Ciodeng,Kp. Ciodeng,Kp. Ciodeng,150000,,1,LUNAS,
+CUST-CHK-205,Erna,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-206,Ida,Kp. Panuusan,Kp. Panuusan,100000,,1,LUNAS,
+CUST-CHK-207,Jubaedah,Umum / Belum Terdata,Umum / Belum Terdata,120000,,1,LUNAS,
+CUST-CHK-208,Isep,Cimaung,Cimaung,120000,,1,BELUM BAYAR,
+CUST-CHK-209,Ibu Leni,Umum / Belum Terdata,Umum / Belum Terdata,120000,,1,LUNAS,
+CUST-CHK-210,Aman RT,Umum / Belum Terdata,Umum / Belum Terdata,120000,,1,LUNAS,
+CUST-CHK-211,Arsetis Galon,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-212,Oliver,Komplek BMI,Komplek BMI,150000,,1,LUNAS,
+CUST-CHK-213,Pa RT,Andir / Kp. Jembatan,Andir / Kp. Jembatan,100000,,1,BELUM BAYAR,
+CUST-CHK-214,Salman,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-216,Pian,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-217,Hasan Irigasi,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-218,Teni,Komplek BCI / Batu Reog,Komplek BCI / Batu Reog,150000,,1,BELUM BAYAR,
+CUST-CHK-219,Wini,Ciawi Gede,Ciawi Gede,150000,,1,OFF,
+CUST-CHK-221,Dita,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-223,Yuli.,Kp. Bauwan,Kp. Bauwan,150000,,1,LUNAS,
+CUST-CHK-225,Sinta,Tambakan / Ranca Manyar,Tambakan / Ranca Manyar,160000,,1,LUNAS,
+CUST-CHK-226,Tamid,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-227,Haidar,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-228,Tian Solomon,Umum / Belum Terdata,Umum / Belum Terdata,200000,,1,LUNAS,
+CUST-CHK-229,Molen Kidul,Umum / Belum Terdata,Umum / Belum Terdata,600000,,1,LUNAS,
+CUST-CHK-231,Zaitul Rahmad,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-232,Neng Asri,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-234,Fitri,Kavling Cibuyung,Kavling Cibuyung,150000,,1,LUNAS,
+CUST-CHK-235,Diba Maulida,Umum / Belum Terdata,Umum / Belum Terdata,190000,,1,LUNAS,
+CUST-CHK-236,Wartini,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-237,Rima Laela,Umum / Belum Terdata,Umum / Belum Terdata,125000,,1,LUNAS,
+CUST-CHK-238,Etrianto Jamu,Umum / Belum Terdata,Umum / Belum Terdata,125000,,1,LUNAS,
+CUST-CHK-240,Adi Dea,Umum / Belum Terdata,Umum / Belum Terdata,180000,,1,LUNAS,
+CUST-CHK-241,Samsul,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-243,Dian 9G,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-244,Santi,Tambakan / Ranca Manyar,Tambakan / Ranca Manyar,150000,,1,LUNAS,
+CUST-CHK-246,Eman Sulaeman,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-247,Lilis Yati,Umum / Belum Terdata,Umum / Belum Terdata,200000,,1,LUNAS,
+CUST-CHK-248,Mamat Suryana,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-249,Midin Uni,Umum / Belum Terdata,Umum / Belum Terdata,200000,,1,LUNAS,
+CUST-CHK-250,Mila 2003,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-254,Elin,Tambakan / Ranca Manyar,Tambakan / Ranca Manyar,150000,,1,LUNAS,
+CUST-CHK-255,Jaenal Wida,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-257,Vina,Parung,Parung,150000,,1,LUNAS,
+CUST-CHK-258,Atie Ravly,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-259,Nanda,Umum / Belum Terdata,Umum / Belum Terdata,200000,,1,LUNAS,
+CUST-CHK-260,KK Mery,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-261,Ijang,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-262,Cintya,Umum / Belum Terdata,Umum / Belum Terdata,200000,,1,LUNAS,
+CUST-CHK-263,Dikarenakan,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-264,Angga. Kembar,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-265,Egan,Umum / Belum Terdata,Umum / Belum Terdata,100000,,1,LUNAS,
+CUST-CHK-266,Roni,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-267,Kuat Rianto,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-268,Iyan,Cibadak,Cibadak,150000,,1,LUNAS,
+CUST-CHK-270,Elah Hayati,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-271,Aceng,Komplek BCI / Batu Reog,Komplek BCI / Batu Reog,150000,,1,BELUM BAYAR,
+CUST-CHK-272,Ipey,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,OFF,
+CUST-CHK-273,Komal,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-274,Neng Awwa,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-275,Tia,Cipicung,Cipicung,150000,,1,LUNAS,
+CUST-CHK-276,Bowo,Kp. Pulo,Kp. Pulo,150000,,1,LUNAS,
+CUST-CHK-277,Eva,Kp. Panuusan,Kp. Panuusan,150000,,1,LUNAS,
+CUST-CHK-281,Sangaji Ramdani,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-282,Yudhi Rmadhani,Umum / Belum Terdata,Umum / Belum Terdata,200000,,1,LUNAS,
+CUST-CHK-283,Yudha,Kavling Cibuyung,Kavling Cibuyung,150000,,1,LUNAS,
+CUST-CHK-284,Porang Si Regar,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-285,Dede Kurniajat,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-286,Ajang Suryatna,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-287,Halawa,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,LUNAS,
+CUST-CHK-288,Tegar,Kp. Panuusan,Kp. Panuusan,150000,,1,BELUM BAYAR,
+CUST-CHK-289,Maulana Rizal,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-290,M Taupik,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-291,Mamah Citra,Umum / Belum Terdata,Umum / Belum Terdata,150000,,1,BELUM BAYAR,
+CUST-CHK-292,Villa Baru,Taraje,Taraje,200000,,1,BELUM BAYAR,
+CUST-CHK-293,Alexander,Kp. Pulo,Kp. Pulo,150000,,1,BELUM BAYAR,
