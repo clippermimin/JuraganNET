@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Search, 
   Filter, 
@@ -70,6 +71,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
   const [remindedCustIds, setRemindedCustIds] = useState<Record<string, boolean>>({});
   const [isCompactView, setIsCompactView] = useState(true);
   const [expandedCardCustId, setExpandedCardCustId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const unpaidCustomers = useMemo(() => {
     return customers.filter(c => !c.is_paid);
@@ -615,16 +621,22 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
       />
 
       {/* POP-UP KWITANSI WA SETELAH TERIMA CASH */}
-      {receiptTarget && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="bg-white border-t sm:border-2 border-green-500 rounded-t-[32px] sm:rounded-3xl p-5 max-w-sm w-full shadow-2xl animate-slideUp space-y-4 text-gray-900 max-h-[90vh] overflow-y-auto">
+      {mounted && receiptTarget && createPortal(
+        <div 
+          className="fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+          onClick={() => setReceiptTarget(null)}
+        >
+          <div 
+            className="bg-white border-2 border-green-500 rounded-3xl p-5 max-w-sm w-full shadow-2xl animate-slideUp space-y-4 text-gray-900 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center flex-shrink-0">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-base text-gray-900">
+                  <h3 className="font-extrabold text-base text-gray-900 leading-tight">
                     Uang Cash Diterima!
                   </h3>
                   <p className="text-xs text-green-600 font-semibold">
@@ -633,8 +645,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setReceiptTarget(null)}
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1 rounded-full"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -643,40 +656,47 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
             <div className="bg-green-50 rounded-2xl p-3 border border-green-100 text-xs space-y-1.5 text-gray-700">
               <p><b className="text-gray-900">Pelanggan:</b> {receiptTarget.name}</p>
               <p><b className="text-gray-900">Wilayah / Server:</b> {receiptTarget.area}</p>
-              <p><b className="text-gray-900">No HP:</b> {receiptTarget.phone}</p>
-              <p className="text-[11px] text-green-800 pt-1">
+              <p><b className="text-gray-900">No HP:</b> {receiptTarget.phone || '-'}</p>
+              <p className="text-[11px] text-green-800 pt-1 leading-relaxed">
                 Status pelanggan otomatis menjadi <b>LUNAS</b> dan mutasi telah dicatat ke kas Bisnis RT/RW.
               </p>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 pt-1">
               <a
                 href={getWhatsAppReceiptUrl(receiptTarget, tenant)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setReceiptTarget(null)}
-                className="min-h-[50px] w-full py-3 px-4 rounded-2xl bg-green-600 hover:bg-green-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-95"
+                className="min-h-[50px] w-full py-3 px-4 rounded-2xl bg-green-600 hover:bg-green-500 active:bg-green-700 text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-green-600/30 transition active:scale-95 cursor-pointer text-center"
               >
-                <MessageSquare className="w-4 h-4" />
+                <MessageSquare className="w-4 h-4 flex-shrink-0" />
                 <span>Kirim Bukti Kwitansi ke WhatsApp</span>
               </a>
 
               <button
                 onClick={() => setReceiptTarget(null)}
                 type="button"
-                className="min-h-[46px] w-full py-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-semibold transition active:scale-95"
+                className="min-h-[46px] w-full py-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 text-xs font-bold transition active:scale-95 cursor-pointer"
               >
                 Selesai (Nanti Saja)
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* MODAL PENAGIHAN CEPAT VIA WA */}
-      {isQuickBillingOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="bg-white border-t sm:border-2 border-orange-500 rounded-t-[32px] sm:rounded-3xl p-5 max-w-lg w-full shadow-2xl animate-slideUp space-y-4 text-gray-900 max-h-[90vh] flex flex-col">
+      {mounted && isQuickBillingOpen && createPortal(
+        <div 
+          className="fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+          onClick={() => setIsQuickBillingOpen(false)}
+        >
+          <div 
+            className="bg-white border-2 border-orange-500 rounded-3xl p-5 max-w-lg w-full shadow-2xl animate-slideUp space-y-4 text-gray-900 max-h-[85vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-start justify-between flex-shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="w-10 h-10 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0">
@@ -692,8 +712,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsQuickBillingOpen(false)}
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -759,7 +780,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
